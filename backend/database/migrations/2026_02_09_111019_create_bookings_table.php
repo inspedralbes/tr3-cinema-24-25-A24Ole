@@ -13,23 +13,14 @@ return new class extends Migration
     {
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('session_id')->constrained(); // Esta funciona porque 'sessions' ya existe.
-            
-            // CAMBIO AQUÍ: Eliminamos ->constrained()
+            $table->foreignId('session_id')->constrained()->onDelete('cascade'); 
             $table->unsignedBigInteger('user_id')->nullable(); 
             
             $table->decimal('total_price', 8, 2);
             $table->string('status')->default('confirmed');
             $table->timestamps();
         });
-
-        Schema::create('booking_seat', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('booking_id')->constrained()->onDelete('cascade');
-            $table->foreignId('seat_id')->nullable(); 
-            $table->string('ticket_type');
-            $table->decimal('price_paid', 8, 2);
-        });
+        // bookings_seat table removed as per new logic
     }
 
     /**
@@ -37,7 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('booking_seat');
         Schema::dropIfExists('bookings');
     }
 };

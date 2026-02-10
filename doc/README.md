@@ -17,13 +17,24 @@ Hemos definido que un asiento pasará por tres estados:
 
 ## 3. Modelo de Datos (Laravel + MySQL)
 
-Hemos estructurado las 5 tablas clave:
+Se ha implementado una lógica de **"Asiento por excepción"** para optimizar el rendimiento y almacenamiento.
+
+### La Nueva Lógica de la DB
+
+- **Tabla `seats` (Maestra):** Solo contiene la configuración física de la sala (dónde hay un asiento y qué tipo es: standard, vip, disabled). Esta tabla es estática y define el mapa de la sala.
+- **Tabla `bookings` / `seat_session` (Dinámica):** Aquí se registran las ocupaciones. Solo se inserta una fila en `seat_session` cuando un asiento es reservado o vendido para una sesión específica.
+
+**¿Cómo sabemos si un asiento está libre?**
+Si el asiento X de la Sala Y **no existe** en la tabla `seat_session` para la Sesión Z, entonces está **disponible**.
+
+### Tablas Clave
 
 - `movies`: Títulos y posters.
-- `rooms`: Dimensiones de las salas (filas/columnas).
-- `sessions`: Cruce de película, sala, hora y precio.
-- `seats`: Ubicación física (Fila A, Asiento 5).
-- `bookings` + `booking_seat`: Registro de la venta final con el tipo de entrada (niño, socio, etc.).
+- `rooms`: Dimensiones de las salas.
+- `sessions`: Sesiones programadas (película, sala, hora).
+- `seats`: Configuración física de los asientos (Fila, Número, Tipo).
+- `bookings`: Cabecera de la reserva (Usuario, Total, Estado).
+- `seat_session`: Registro individual de cada asiento ocupado en una sesión.
 
 ![Esquema de Base de Datos](./Esquema_de_base_datos.png)
 

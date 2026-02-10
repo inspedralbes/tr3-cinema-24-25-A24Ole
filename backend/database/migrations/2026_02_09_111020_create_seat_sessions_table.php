@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('seats', function (Blueprint $table) {
+        Schema::create('seat_session', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('room_id')->constrained()->onDelete('cascade');
-            $table->string('row_label'); // 'A', 'B', 'C'
-            $table->integer('seat_number'); // 1, 2, 3
-            // Tipo: 'standard', 'vip' (Fila 3), 'disabled' (Fila 1)
-            $table->string('type')->default('standard'); 
+            $table->foreignId('session_id')->constrained()->onDelete('cascade');
+            $table->foreignId('seat_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->nullable(); // Quién lo compró
+            $table->string('status'); // 'sold', 'reserved'
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('seats');
+        Schema::dropIfExists('seat_session');
     }
 };
