@@ -1,16 +1,24 @@
-# transversals
-Esquema mínim de carpetes pels projectes transversals
+# Sistema de Gestión de Reserva de Butacas de Cine
 
-És obligatori seguir aquesta estructura tot i que la podeu ampliar.
+## Descripción
 
-## Atenció
-Un cop comenceu heu de canviar aquesta explicació amb la corresponent al vostre projecte (utilitzant markdown)
+Sistema de gestión de reservas de cine con funcionalidad en tiempo real, diseñado para manejar colas virtuales y evitar duplicidad de reservas.
 
-# Aquest fitxer ha de contenir com a mínim:
- * Nom dels integrants
- * Nom del projecte
- * Petita descripció
- * Adreça del gestor de tasques (taiga, jira, trello...)
- * Adreça del prototip gràfic del projecte (Penpot, figma, moqups...)
- * URL de producció (quan la tingueu)
- * Estat: (explicació d'en quin punt està)
+## Integrantes
+
+- **Oleksiy Procko Yatsko**
+
+## Tecnologías
+
+- **Frontend:** Vue 3
+- **Backend:** Laravel
+- **Realtime:** Node.js + Socket.io + WebRTC
+
+## Enlaces de Interés
+
+- **Gestor de Tareas:** [https://tree.taiga.io/project/lexk0-tr3-cinema-oleksiy/timeline]
+- **URL de Producción:** Aqui ira el url
+
+## Estado del Proyecto
+
+En desarrollo (Sprint 1/3)
