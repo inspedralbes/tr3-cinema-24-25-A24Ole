@@ -4,7 +4,7 @@
 
 **Proyecto:** Sistema de gestión de reserva de butacas de cine.
 **Tiempo:** 3 semanas (organizado en 3 Sprints).
-**Tecnologías:** Vue 3 (Frontend), Laravel (Backend/Persistencia) y Node.js + Socket.io (Tiempo real) + WebRTC (Bloqueo de asientos).
+**Tecnologías:** Nuxt 3 (Frontend), Laravel (Backend/Persistencia) y Node.js + Socket.io (Tiempo real) + WebRTC (Bloqueo de asientos).
 **Funcionalidad estrella:** Cola virtual de acceso (máximo 5 personas reservando a la vez) y gestión de asientos en tiempo real para evitar duplicidades.
 
 ## 2. Arquitectura de Estados (Butacas)

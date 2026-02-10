@@ -6,11 +6,11 @@ Sistema de gestión de reservas de cine con funcionalidad en tiempo real, diseñ
 
 ## Integrantes
 
-- **Oleksiy Procko Yatsko**
+- **Oleksiy Prochko Yatsko**
 
 ## Tecnologías
 
-- **Frontend:** Vue 3
+- **Frontend:** Nuxt 3
 - **Backend:** Laravel
 - **Realtime:** Node.js + Socket.io + WebRTC
 
