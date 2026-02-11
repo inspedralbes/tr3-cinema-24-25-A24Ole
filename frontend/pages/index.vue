@@ -1,32 +1,36 @@
 <template>
-  <div class="max-w-7xl mx-auto px-6 py-12">
-    <div class="flex items-end justify-between mb-12">
-      <div>
-        <h1 class="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter mb-2">Now Playing</h1>
-        <p class="text-gray-400">Experience cinema like never before.</p>
-      </div>
-      <div class="hidden md:flex gap-4">
-        <button class="size-10 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors">
-          <span class="material-symbols-outlined">chevron_left</span>
-        </button>
-        <button class="size-10 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white/10 transition-colors">
-          <span class="material-symbols-outlined">chevron_right</span>
-        </button>
-      </div>
-    </div>
+  <div class="pb-20">
+    <!-- Hero Section -->
+    <HeroSection />
 
-    <!-- Movie Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 lg:gap-8">
-      <MovieCard v-for="movie in movies" :key="movie.id" :movie="movie" @click="bookingStore.setMovie(movie)" />
+    <!-- Movie Listings -->
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex items-end justify-between mb-12">
+        <div>
+          <h2 class="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+            <span class="w-1.5 h-8 bg-primary rounded-full shadow-[0_0_10px_rgba(242,13,51,0.8)]"></span>
+            Now Showing
+          </h2>
+        </div>
+        
+        <!-- Filter/Controls -->
+        <MovieFilters v-model="activeFilter" />
+      </div>
+
+      <MovieGrid :movies="filteredMovies" @select="handleMovieSelect" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useBookingStore } from '@/stores/booking'
+import HeroSection from '@/components/home/HeroSection.vue'
+import MovieFilters from '@/components/home/MovieFilters.vue'
+import MovieGrid from '@/components/home/MovieGrid.vue'
 
 const bookingStore = useBookingStore()
+const activeFilter = ref('All')
 
 const movies = ref([
   {
@@ -58,4 +62,15 @@ const movies = ref([
     poster: 'https://image.tmdb.org/t/p/w500/pFlaoOXp95Mcn3jAXSpjmBODlfR.jpg' // Mock
   }
 ])
+
+const filteredMovies = computed(() => {
+  if (activeFilter.value === 'All') return movies.value
+  return movies.value.filter(m => m.genre.includes(activeFilter.value))
+})
+
+const handleMovieSelect = (movie) => {
+  bookingStore.currentMovie = movie // Direct assignment or use a specific action if available
+  // To match original behavior:
+  bookingStore.setMovie(movie)
+}
 </script>

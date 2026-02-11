@@ -1,3 +1,7 @@
+# Context files
+contexto.md
+
+# Logs
 *.log
 .DS_Store
 .env

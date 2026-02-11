@@ -1,8 +1,7 @@
 <template>
-  <div class="bg-background-light dark:bg-background-dark min-h-screen text-slate-900 dark:text-white transition-colors duration-300 font-display">
-    <AppNavbar />
+  <NuxtLayout>
     <NuxtPage />
-  </div>
+  </NuxtLayout>
 </template>
 
 <script setup>

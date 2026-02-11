@@ -11,8 +11,8 @@
           </span>
           Live Session
         </div>
-        <div class="mt-8 text-center" v-if="movie">
-          <h1 class="text-3xl font-black uppercase tracking-tighter">{{ movie.title }}</h1>
+        <div class="mt-8 text-center" v-if="bookingStore.currentMovie">
+          <h1 class="text-3xl font-black uppercase tracking-tighter">{{ bookingStore.currentMovie.title }}</h1>
           <p class="text-white/40 text-sm mt-1 uppercase tracking-[0.2em]">Hall 4 • Today, 8:30 PM • 4K Dolby Atmos</p>
         </div>
       </div>
@@ -28,68 +28,30 @@
     </section>
 
     <!-- Right Section: Sidebar -->
-    <aside class="w-full lg:w-[400px] bg-white/[0.03] border-l border-white/10 p-8 flex flex-col justify-between h-auto lg:min-h-[calc(100vh-80px)]">
-      <div>
-        <h3 class="text-lg font-bold uppercase tracking-tight mb-8">Your Selection</h3>
-        
-        <div v-if="bookingStore.selectedSeats.length === 0" class="text-white/30 text-sm text-center py-10">
-          Select seats to proceed
-        </div>
-
-        <div class="space-y-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
-          <div v-for="seat in bookingStore.selectedSeats" :key="seat.id" 
-               class="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10 animate-fade-in-up">
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded bg-primary flex items-center justify-center font-bold text-white shadow-lg shadow-primary/30">
-                {{ seat.label }}
-              </div>
-              <div>
-                <p class="text-sm font-bold">{{ getSeatTypeLabel(seat.type) }}</p>
-                <p class="text-xs text-white/40 uppercase">Row {{ seat.row }} • Seat {{ seat.number }}</p>
-              </div>
-            </div>
-            <div class="text-right">
-              <button @click="toggleSeat(seat)" class="text-white/60 hover:text-white transition-colors">
-                <span class="material-symbols-outlined">close</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-8 pt-8 border-t border-white/10 space-y-6">
-        <div class="flex justify-between items-end">
-          <span class="text-xs text-white/40 uppercase tracking-widest">Total Seats</span>
-          <span class="text-3xl font-black text-white">{{ bookingStore.selectedSeats.length }}</span>
-        </div>
-        
-        <button 
-          @click="handleNext"
-          :disabled="bookingStore.selectedSeats.length === 0"
-          class="w-full h-16 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] neon-glow text-white"
-        >
-          <span class="text-sm font-black uppercase tracking-widest">Select Tickets</span>
-          <span class="material-symbols-outlined">arrow_forward</span>
-        </button>
-        
-        <p class="text-[10px] text-center text-white/30 uppercase tracking-tight">
-           By proceeding, you agree to our <a href="#" class="underline hover:text-white">Refund Policy</a>
-        </p>
-      </div>
-    </aside>
+    <BookingSidebar 
+      :selected-seats="bookingStore.selectedSeats" 
+      @remove="toggleSeat"
+      @next="handleNext"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useBookingStore } from '@/stores/booking'
+import { useBooking } from '@/composables/useBooking'
 import { useRealtime } from '@/composables/useRealtime'
-import { useWebRTC } from '@/composables/useWebRTC' // Import WebRTC composable
+import { useWebRTC } from '@/composables/useWebRTC'
+import { useSeatLogic } from '@/composables/useSeatLogic'
+import BookingSidebar from '@/components/booking/BookingSidebar.vue'
+import SeatMap from '@/components/SeatMap.vue'
 
 const route = useRoute()
 const bookingStore = useBookingStore()
 const { nextStep } = useBooking()
-const { socket, isConnected, lockedSeats, activeUsers, connect, disconnect, lockSeat, unlockSeat } = useRealtime()
+const { toggleSeat } = useSeatLogic()
+const { socket, isConnected, lockedSeats, activeUsers, connect, disconnect } = useRealtime()
 const { initWebRTC, bindEvents, cleanup, sendCursorUpdate, cursors } = useWebRTC(socket)
 
 // Connect on mount
@@ -99,7 +61,13 @@ onMounted(() => {
     
     // Mock Move Data if empty
     if (!bookingStore.currentMovie) {
-        bookingStore.setMovie({ id: 1, title: 'Neon Demon', poster: 'https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg' })
+        bookingStore.setMovie({ 
+          id: 1, 
+          title: 'Neon Demon', 
+          poster: 'https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg', 
+          genre: 'Sci-Fi', 
+          duration: '2h', 
+        })
     }
 })
 
@@ -121,6 +89,9 @@ const handleMouseMove = ({ x, y }) => {
     }
 }
 
+const handleNext = () => {
+    nextStep('seats')
+}
 
 // Mock Data Generation
 const generateRows = () => {
@@ -136,9 +107,7 @@ const generateRows = () => {
         if (rowIndex === 0) type = 'disabled'
         if (rowIndex === 2) type = 'vip'
 
-        // Mock some occupied seats
         let status = 'available'
-        // if (Math.random() > 0.8) status = 'occupied' // Disable random mock occupancy to test realtime
 
         seats.push({
             id: `${label}${i}`,
@@ -156,37 +125,4 @@ const generateRows = () => {
 }
 
 const seatRows = ref(generateRows())
-const movie = computed(() => bookingStore.currentMovie)
-
-const toggleSeat = (seat) => {
-  if (bookingStore.selectedSeats.some(s => s.id === seat.id)) {
-      // Unselecting
-      unlockSeat(seat.id)
-      bookingStore.toggleSeat(seat)
-  } else {
-      // Selecting
-      lockSeat(seat.id)
-      bookingStore.toggleSeat(seat)
-  }
-}
-
-
-const getSeatTypeLabel = (type) => {
-  switch(type) {
-    case 'vip': return 'VIP Seat'
-    case 'disabled': return 'Accessible Seat'
-    default: return 'Standard Seat'
-  }
-}
-
-const handleNext = () => {
-    nextStep('seats')
-}
-
-// Initialize store if needed (mock)
-onMounted(() => {
-    if (!bookingStore.currentMovie) {
-        bookingStore.setMovie({ id: 1, title: 'Neon Demon', poster: 'https://...' })
-    }
-})
 </script>

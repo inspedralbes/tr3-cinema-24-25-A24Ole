@@ -1,26 +1,26 @@
 <template>
-  <header class="flex items-center justify-between border-b border-solid border-white/10 px-6 lg:px-20 py-4 bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
-    <div class="flex items-center gap-4 text-white">
-      <NuxtLink to="/" class="flex items-center gap-4">
-        <div class="size-6 text-primary">
-          <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-            <path clip-rule="evenodd" d="M24 4H6V17.3333V30.6667H24V44H42V30.6667V17.3333H24V4Z" fill="currentColor" fill-rule="evenodd"></path>
+  <header class="glass fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 lg:px-12 py-4 transition-all duration-300">
+    <div class="flex items-center gap-4">
+      <NuxtLink to="/" class="group flex items-center gap-3">
+        <div class="relative flex items-center justify-center size-8 text-primary transition-transform duration-300 group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_rgba(242,13,51,0.5)]">
+           <svg fill="currentColor" viewBox="0 0 24 24" class="size-full">
+            <path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/>
           </svg>
         </div>
-        <h2 class="text-white text-xl font-bold leading-tight tracking-tight uppercase">CinemaFlow</h2>
+        <h2 class="text-white text-lg font-black tracking-widest uppercase font-display group-hover:text-primary transition-colors duration-300">Cinema<span class="text-primary">Flow</span></h2>
       </NuxtLink>
     </div>
-    <div class="flex items-center gap-10">
-      <nav class="hidden md:flex items-center gap-8">
-        <NuxtLink to="/" class="text-white/70 hover:text-white text-sm font-medium transition-colors">Movies</NuxtLink>
-        <a href="#" class="text-white/70 hover:text-white text-sm font-medium transition-colors">Theaters</a>
-        <a href="#" class="text-white/70 hover:text-white text-sm font-medium transition-colors">Promotions</a>
-      </nav>
-      <div class="flex items-center gap-4">
-        <button class="flex items-center justify-center rounded-full size-10 bg-white/5 hover:bg-white/10 text-white transition-all">
-          <span class="material-symbols-outlined">person</span>
-        </button>
-      </div>
+    
+    <nav class="hidden md:flex items-center gap-8">
+      <NuxtLink to="/" class="text-sm font-semibold tracking-wide text-secondary hover:text-white transition-colors uppercase relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Movies</NuxtLink>
+      <a href="#" class="text-sm font-semibold tracking-wide text-secondary hover:text-white transition-colors uppercase relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Theaters</a>
+      <a href="#" class="text-sm font-semibold tracking-wide text-secondary hover:text-white transition-colors uppercase relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Promotions</a>
+    </nav>
+
+    <div class="flex items-center gap-4">
+      <button class="group flex items-center justify-center rounded-full size-10 bg-surface-200 border border-white/5 text-white transition-all hover:bg-primary hover:border-primary hover:shadow-[0_0_15px_rgba(242,13,51,0.4)]">
+        <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">person</span>
+      </button>
     </div>
   </header>
 </template>

@@ -1,23 +1,35 @@
 <template>
-  <div class="group relative rounded-xl overflow-hidden cursor-pointer neon-glow bg-card-dark border border-border-dark transition-all hover:-translate-y-2">
-    <!-- Poster -->
+  <NuxtLink :to="`/showtime/${movie.id}/seats`" class="group relative block rounded-xl overflow-hidden bg-surface-100 border border-white/5 transition-all duration-500 hover:border-primary/50 hover:shadow-[0_0_30px_rgba(242,13,51,0.15)]">
+    <!-- Poster Image -->
     <div class="aspect-[2/3] w-full relative overflow-hidden">
-      <img :src="movie.poster" :alt="movie.title" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+      <img :src="movie.poster" :alt="movie.title" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1">
       
-      <!-- Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent opacity-100 transition-opacity"></div>
+      <!-- Gradient Overlay (Always visible but stronger on hover) -->
+      <div class="absolute inset-0 bg-gradient-to-t from-void via-void/50 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
       
-      <div class="absolute bottom-0 left-0 w-full p-4 transform translate-y-0 transition-transform">
-        <h3 class="text-xl font-bold text-white leading-tight mb-1">{{ movie.title }}</h3>
-        <p class="text-xs text-gray-400 uppercase tracking-wider mb-3">{{ movie.genre }} • {{ movie.duration }}</p>
+      <!-- Content Container -->
+      <div class="absolute inset-x-0 bottom-0 p-6 translate-y-2 transition-transform duration-300 group-hover:translate-y-0">
+        <!-- Badge -->
+        <span class="inline-block px-2 py-1 mb-3 text-[10px] font-bold tracking-widest text-primary border border-primary/30 rounded uppercase bg-primary/10 backdrop-blur-sm">
+          {{ movie.duration }}
+        </span>
+
+        <!-- Title -->
+        <h3 class="text-xl font-bold text-white leading-tight mb-1 font-display group-hover:text-primary transition-colors">{{ movie.title }}</h3>
         
-        <NuxtLink :to="`/showtime/${movie.id}/seats`" class="w-full py-3 bg-primary hover:bg-primary/90 text-white font-bold uppercase text-xs tracking-widest rounded flex items-center justify-center gap-2 transition-colors">
-          Book Now
-          <span class="material-symbols-outlined text-base">confirmation_number</span>
-        </NuxtLink>
+        <!-- Genre -->
+        <p class="text-sm text-gray-400 mb-4">{{ movie.genre }}</p>
+
+        <!-- CTA Button (Hidden until hover/focus) -->
+        <div class="opacity-0 transform translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+          <button class="w-full py-3 bg-primary text-white font-bold uppercase text-xs tracking-widest rounded-lg shadow-[0_0_15px_rgba(242,13,51,0.4)] hover:bg-red-600 hover:shadow-[0_0_25px_rgba(242,13,51,0.6)] transition-all flex items-center justify-center gap-2">
+            <span>Book Seats</span>
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+  </NuxtLink>
 </template>
 
 <script setup>

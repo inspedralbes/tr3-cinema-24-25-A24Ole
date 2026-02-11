@@ -128,18 +128,18 @@ const getSeatClasses = (seat) => {
   }
 
   if (isSelected) {
-    return 'bg-primary seat-selected scale-110 z-10'
+    return 'bg-primary shadow-[0_0_15px_rgba(242,13,51,0.6)] scale-110 z-10 border border-primary'
   }
 
   // Available styles based on type
   if (seat.type === 'vip') {
-    return 'border border-yellow-500/50 hover:border-yellow-400 hover:shadow-[0_0_10px_rgba(234,179,8,0.3)] cursor-pointer'
+    return 'border border-yellow-500/50 hover:border-yellow-400 hover:shadow-[0_0_15px_rgba(234,179,8,0.4)] hover:bg-yellow-500/10 cursor-pointer'
   }
   
   if (seat.type === 'disabled') {
-    return 'border border-blue-500/50 hover:border-blue-400 hover:shadow-[0_0_10px_rgba(59,130,246,0.3)] cursor-pointer'
+    return 'border border-blue-500/50 hover:border-blue-400 hover:shadow-[0_0_15px_rgba(59,130,246,0.4)] hover:bg-blue-500/10 cursor-pointer'
   }
 
-  return 'border border-white/40 hover:border-primary hover:shadow-[0_0_10px_rgba(242,13,51,0.3)] cursor-pointer'
+  return 'border border-white/20 hover:border-primary hover:shadow-[0_0_10px_rgba(242,13,51,0.4)] hover:bg-primary/10 cursor-pointer'
 }
 </script>

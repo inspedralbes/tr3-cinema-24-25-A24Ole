@@ -1,20 +1,26 @@
 <template>
-  <div class="min-h-[80vh] flex flex-col items-center justify-center text-center px-4">
-    <div class="relative mb-8">
-       <div class="size-32 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
-       <div class="absolute inset-0 flex items-center justify-center">
-         <span class="material-symbols-outlined text-4xl text-white">hourglass_empty</span>
+  <div class="min-h-[80vh] flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
+    <!-- Ambient Background -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+    <div class="relative mb-12">
+       <div class="size-40 rounded-full border-4 border-surface-200 border-t-primary animate-spin shadow-[0_0_50px_rgba(242,13,51,0.2)]"></div>
+       <div class="absolute inset-0 flex items-center justify-center animate-pulse">
+         <span class="material-symbols-outlined text-5xl text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">hourglass_top</span>
        </div>
     </div>
     
-    <h1 class="text-3xl font-black text-white uppercase tracking-tight mb-4">You're in line</h1>
-    <p class="text-gray-400 max-w-md mb-8">
-      There are currently many users booking tickets. Please wait a moment, you will be redirected automatically.
+    <h1 class="text-5xl font-black text-white uppercase tracking-tighter mb-6 font-display">You're in line</h1>
+    <p class="text-secondary text-lg max-w-lg mb-12 leading-relaxed">
+      We are experiencing high demand. Please hold tight, you will be redirected to the booking experience shortly.
     </p>
 
-    <div class="bg-card-dark border border-border-dark px-6 py-4 rounded-lg">
-      <p class="text-sm text-gray-500 uppercase tracking-widest mb-1">Your Position</p>
-      <p class="text-2xl font-bold text-white">{{ queuePosition !== null ? queuePosition : 'Calculating...' }}</p>
+    <div class="bg-surface-100/80 border border-white/10 px-10 py-6 rounded-2xl backdrop-blur-md shadow-2xl relative group">
+      <div class="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+      <div class="relative">
+        <p class="text-xs font-bold text-secondary uppercase tracking-widest mb-2">Your Position in Queue</p>
+        <p class="text-4xl font-black text-white neon-text">{{ queuePosition !== null ? queuePosition : 'Calculating...' }}</p>
+      </div>
     </div>
   </div>
 </template>
