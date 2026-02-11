@@ -1,8 +1,22 @@
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2025-07-15',
+  compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
-  modules: ['@nuxtjs/tailwindcss', '@pinia/nuxt'],
+  modules: [
+    '@nuxtjs/tailwindcss',
+    '@pinia/nuxt'
+  ],
+  vite: {
+    plugins: [
+      nodePolyfills()
+    ]
+  },
+  alias: {
+    '~': './'
+  },
+  css: ['~/assets/css/main.css'],
   runtimeConfig: {
     public: {
       apiBase: process.env.API_BASE || 'http://localhost:8000/api',

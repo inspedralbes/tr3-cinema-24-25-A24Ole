@@ -1,69 +1,145 @@
-const { Server } = require("socket.io");
-const http = require("http");
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const cors = require('cors');
 
-const httpServer = http.createServer();
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*", // En producción, pon aquí la URL de tu Vue (ej: http://localhost:5173)
-    methods: ["GET", "POST"]
-  }
+const app = express();
+app.use(cors());
+
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "*", // Allow all for dev
+        methods: ["GET", "POST"]
+    }
 });
 
-// Estado en memoria (Temporal para las 3 semanas)
-const activeUsers = new Set(); // IDs de sockets dentro comprando
-const queue = [];              // Sockets esperando
-const blockedSeats = {};       // { "session_1": { "seat_A1": { userId, expiresAt } } }
+const MAX_ACTIVE_USERS = 5;
+const LOCK_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
-io.on("connection", (socket) => {
-  console.log("Nuevo usuario conectado:", socket.id);
+// State
+let activeUsers = new Set();
+let queue = [];
+let lockedSeats = new Map(); // seatId -> { socketId, timestamp, timeoutId }
 
-  // --- LÓGICA DE COLA VIRTUAL ---
-  socket.on("request_access", () => {
-    if (activeUsers.size < 5) {
-      activeUsers.add(socket.id);
-      socket.emit("access_granted");
+io.on('connection', (socket) => {
+    console.log('User connected:', socket.id);
+
+    // --- Queue Management ---
+    if (activeUsers.size < MAX_ACTIVE_USERS) {
+        activeUsers.add(socket.id);
+        socket.emit('access:granted', {
+            activeUsers: Array.from(activeUsers).filter(id => id !== socket.id)
+        });
+        console.log(`User ${socket.id} admitted. Active: ${activeUsers.size}`);
     } else {
-      queue.push(socket.id);
-      socket.emit("queue_position", { position: queue.indexOf(socket.id) + 1 });
-    }
-  });
-
-  // --- LÓGICA DE BLOQUEO DE ASIENTOS ---
-  socket.on("seat_click", ({ sessionId, seatId }) => {
-    // 1. Verificar si ya está bloqueado por otro
-    if (blockedSeats[sessionId]?.[seatId]) {
-      return socket.emit("seat_error", "Asiento ya bloqueado");
+        queue.push(socket.id);
+        socket.emit('access:queued', { position: queue.length });
+        console.log(`User ${socket.id} queued. Position: ${queue.length}`);
     }
 
-    // 2. Bloquear asiento
-    if (!blockedSeats[sessionId]) blockedSeats[sessionId] = {};
-    blockedSeats[sessionId][seatId] = { 
-      userId: socket.id, 
-      expiresAt: Date.now() + 5 * 60 * 1000 
-    };
+    // --- Seat Locking ---
+    // Initial state
+    socket.emit('seats:update', Array.from(lockedSeats.keys()));
 
-    // 3. Notificar a TODOS los demás
-    io.emit("seat_blocked", { sessionId, seatId, userId: socket.id });
-  });
+    socket.on('request:lock', (seatId) => {
+        if (!activeUsers.has(socket.id)) return; // Only active users can lock
 
-  socket.on("disconnect", () => {
-    activeUsers.delete(socket.id);
-    // Sacar de la cola si estaba ahí
-    const index = queue.indexOf(socket.id);
-    if (index > -1) queue.splice(index, 1);
-    
-    // Si un espacio se libera, dar paso al siguiente de la cola
-    if (activeUsers.size < 5 && queue.length > 0) {
-      const nextSocketId = queue.shift();
-      io.to(nextSocketId).emit("access_granted");
-      activeUsers.add(nextSocketId);
-    }
-    
-    console.log("Usuario desconectado");
-  });
+        if (lockedSeats.has(seatId)) {
+            socket.emit('error:locked', { seatId, message: 'Seat already locked' });
+            return;
+        }
+
+        // Lock the seat
+        const timeoutId = setTimeout(() => unlockSeat(seatId), LOCK_TIMEOUT);
+        lockedSeats.set(seatId, { 
+            socketId: socket.id, 
+            timestamp: Date.now(),
+            timeoutId 
+        });
+
+        // Broadcast to everyone (including sender for confirmation)
+        io.emit('seat:locked', seatId);
+        console.log(`Seat ${seatId} locked by ${socket.id}`);
+    });
+
+    socket.on('request:unlock', (seatId) => {
+        const lock = lockedSeats.get(seatId);
+        if (lock && lock.socketId === socket.id) {
+            unlockSeat(seatId);
+        }
+    });
+
+    // --- WebRTC Signaling ---
+    // When a user is granted access, send them the list of other active users to initiate connections
+    socket.on('signal', (data) => {
+        io.to(data.to).emit('signal', {
+            signal: data.signal,
+            from: socket.id
+        });
+    });
+
+    // --- Disconnect Handling ---
+    socket.on('disconnect', () => {
+        console.log('User disconnected:', socket.id);
+        
+        // Notify others to destroy peer connection
+        socket.broadcast.emit('user-disconnected', socket.id);
+
+        // 1. Release locks held by this user
+        for (const [seatId, lock] of lockedSeats.entries()) {
+            if (lock.socketId === socket.id) {
+                unlockSeat(seatId);
+            }
+        }
+
+        // 2. Manage Queue/Active Users
+        if (activeUsers.has(socket.id)) {
+            activeUsers.delete(socket.id);
+            
+            // Admit next from queue if available
+            if (queue.length > 0) {
+                const nextSocketId = queue.shift();
+                activeUsers.add(nextSocketId);
+                
+                io.to(nextSocketId).emit('access:granted', {
+                    activeUsers: Array.from(activeUsers).filter(id => id !== nextSocketId)
+                });
+                
+                // Update remaining queue positions
+                queue.forEach((sid, index) => {
+                    io.to(sid).emit('queue:update', { position: index + 1 });
+                });
+                
+                console.log(`User ${nextSocketId} promoted from queue.`);
+            }
+        } else {
+            // Remove from queue if they were waiting
+            const index = queue.indexOf(socket.id);
+            if (index !== -1) {
+                queue.splice(index, 1);
+                // Update positions only for those behind
+                for (let i = index; i < queue.length; i++) {
+                    io.to(queue[i]).emit('queue:update', { position: i + 1 });
+                }
+            }
+        }
+        
+        console.log(`Active: ${activeUsers.size}, Queue: ${queue.length}`);
+    });
 });
 
-const PORT = 3000;
-httpServer.listen(PORT, () => {
-  console.log(`Servidor Realtime corriendo en puerto ${PORT}`);
+function unlockSeat(seatId) {
+    const lock = lockedSeats.get(seatId);
+    if (lock) {
+        clearTimeout(lock.timeoutId);
+        lockedSeats.delete(seatId);
+        io.emit('seat:unlocked', seatId);
+        console.log(`Seat ${seatId} unlocked (Timeout or Release)`);
+    }
+}
+
+const PORT = process.env.PORT || 3002;
+server.listen(PORT, () => {
+    console.log(`Realtime server running on port ${PORT}`);
 });
