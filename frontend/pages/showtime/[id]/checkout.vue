@@ -119,11 +119,17 @@
             </div>
           </div>
           
-          <button @click="handlePayment" class="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(242,13,51,0.4)] hover:shadow-[0_0_30px_rgba(242,13,51,0.6)] flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] group uppercase tracking-widest text-sm">
-             Pay Now
-             <span class="material-symbols-outlined group-hover:lock transition-colors">lock</span>
+
+          <button @click="handlePayment" :disabled="status === 'loading'" class="w-full bg-primary text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(242,13,51,0.4)] hover:shadow-[0_0_30px_rgba(242,13,51,0.6)] flex items-center justify-center gap-2 transition-all hover:scale-[1.02] active:scale-[0.98] group uppercase tracking-widest text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+             <span v-if="status === 'loading'" class="material-symbols-outlined animate-spin">refresh</span>
+             <span v-else>Pay Now</span>
+             <span v-if="status !== 'loading'" class="material-symbols-outlined group-hover:lock transition-colors">lock</span>
           </button>
           
+           <div v-if="error" class="mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-xs font-bold text-center">
+             {{ error }}
+           </div>
+
            <p class="text-center text-[10px] uppercase tracking-widest text-secondary/70 mt-6 font-bold">
               Refundable up to 2 hours before showtime
            </p>
@@ -134,14 +140,20 @@
 </template>
 
 <script setup>
+import { onMounted } from 'vue' // Ensure onMounted is imported
 import { useBookingStore } from '@/stores/booking'
-import { useBooking } from '@/composables/useBooking'
+import { useBookingSubmit } from '@/composables/useBookingSubmit'
+import { useRealtime } from '@/composables/useRealtime'
 
 const bookingStore = useBookingStore()
-const { nextStep } = useBooking()
+const { submitBooking, status, error } = useBookingSubmit()
+const { connect } = useRealtime()
 
-const handlePayment = () => {
-    // Simulate payment handling
-    nextStep('checkout')
+onMounted(() => {
+    connect()
+})
+
+const handlePayment = async () => {
+    await submitBooking()
 }
 </script>

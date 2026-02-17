@@ -4,18 +4,25 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Booking extends Model
+class SeatSession extends Model
 {
+    protected $table = 'seat_session';
+
     protected $fillable = [
         'session_id',
+        'seat_id',
         'user_id',
-        'total_price',
-        'status',
+        'status', // 'sold', 'reserved', 'blocked'
     ];
 
     public function session()
     {
         return $this->belongsTo(Session::class);
+    }
+
+    public function seat()
+    {
+        return $this->belongsTo(Seat::class);
     }
 
     public function user()

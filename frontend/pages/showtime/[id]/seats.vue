@@ -73,7 +73,7 @@ onMounted(() => {
 
 onUnmounted(() => {
     cleanup() // Cleanup WebRTC
-    disconnect()
+    // disconnect() // Keep socket connected for Checkout
 })
 
 // Watch for access granted to initialize peers
@@ -96,21 +96,25 @@ const handleNext = () => {
 // Mock Data Generation
 const generateRows = () => {
   const rows = []
-  const rowLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+  const rowLabels = ['A', 'B', 'C', 'D', 'E'] // 5 rows to match backend Sala A
   
   rowLabels.forEach((label, rowIndex) => {
     const seats = []
-    const seatsInRow = 10 
+    const seatsInRow = 10 // 10 columns to match backend Sala A
     
     for (let i = 1; i <= seatsInRow; i++) {
         let type = 'standard'
-        if (rowIndex === 0) type = 'disabled'
-        if (rowIndex === 2) type = 'vip'
+        if (rowIndex === 0) type = 'disabled' // First row (A)
+        if (rowIndex === 2) type = 'vip'      // Third row (C)
 
         let status = 'available'
 
+        // Calculate ID based on Sala A layout (5 rows, 10 cols)
+        // IDs: 1-10 (Row A), 11-20 (Row B), etc.
+        const seatId = (rowIndex * 10) + i
+
         seats.push({
-            id: `${label}${i}`,
+            id: seatId, // Send integer ID to backend
             label: `${label}${i}`,
             row: label,
             number: i,
