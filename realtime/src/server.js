@@ -14,7 +14,7 @@ const io = new Server(server, {
     }
 });
 
-const MAX_ACTIVE_USERS = 5;
+const MAX_ACTIVE_USERS = 4;
 const LOCK_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 
 // State

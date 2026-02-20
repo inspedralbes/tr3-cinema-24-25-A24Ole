@@ -14,6 +14,7 @@ export const useRealtime = () => {
   // const config = useRuntimeConfig()
   // Ensure we use the correct URL. In dev it might be localhost:3002
   const SOCKET_URL = 'http://localhost:3002' 
+  const router = useRouter()
 
   const connect = () => {
     if (socket.value?.connected) return
@@ -45,7 +46,6 @@ export const useRealtime = () => {
     socket.value.on('access:queued', (data) => {
         queuePosition.value = data.position
         // Redirect to waiting room if not already there
-        const router = useRouter()
         if (router.currentRoute.value.path !== '/waiting-room') {
             router.push('/waiting-room')
         }

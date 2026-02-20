@@ -44,7 +44,12 @@ onUnmounted(() => {
 watch(startTransition, (val) => {
     if (val) {
         // Redirect to booking flow
-        router.push('/') 
+        // Try to go back to the previous movie if known, or home
+        if (window.history.length > 1) {
+            router.back()
+        } else {
+            router.push('/')
+        }
     }
 })
 </script>
