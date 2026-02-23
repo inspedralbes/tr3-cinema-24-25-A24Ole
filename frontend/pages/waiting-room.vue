@@ -31,10 +31,15 @@ import { useRouter } from 'vue-router'
 import { watch, onMounted, onUnmounted } from 'vue'
 
 const router = useRouter()
-const { connect, disconnect, queuePosition, startTransition } = useRealtime()
+const { connect, disconnect, queuePosition, startTransition, socket } = useRealtime()
 
 onMounted(() => {
-    connect()
+    // If there is no socket or state is lost due to hard refresh, return home
+    if (!socket.value) {
+        router.push('/')
+        return
+    }
+    // We do not call connect() here again with no roomId, it should already be connected.
 })
 
 onUnmounted(() => {

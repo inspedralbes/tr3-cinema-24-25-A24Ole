@@ -1,7 +1,7 @@
 <template>
   <div class="pb-20">
     <!-- Hero Section -->
-    <HeroSection />
+    <HeroSection :movie="featuredMovie" @book="handleMovieSelect" />
 
     <!-- Movie Listings -->
     <div class="max-w-7xl mx-auto px-6">
@@ -45,6 +45,10 @@ const {
 
 // Fallback to empty array if fetch fails or returns null
 if (!movies.value) movies.value = [];
+
+const featuredMovie = computed(() => {
+  return movies.value && movies.value.length > 0 ? movies.value[0] : null;
+});
 
 const filteredMovies = computed(() => {
   if (activeFilter.value === "All") return movies.value;

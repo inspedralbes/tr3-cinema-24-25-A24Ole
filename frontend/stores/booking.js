@@ -52,6 +52,21 @@ export const useBookingStore = defineStore('booking', {
             return
         }
         this.selectedSeats.push(seat)
+        
+        let ticketId = 'adult';
+        let ticketName = 'General Admission';
+        let ticketPrice = seat.price || 12.50;
+        
+        if (seat.type === 'vip') {
+            ticketId = 'vip';
+            ticketName = 'VIP Experience';
+        } else if (seat.type === 'disabled') {
+            ticketId = 'accessible';
+            ticketName = 'Accessible Seat';
+        }
+
+        this.selectedTickets[seat.id] = { id: ticketId, name: ticketName, price: ticketPrice };
+
       } else {
         this.selectedSeats.splice(index, 1)
         delete this.selectedTickets[seat.id]

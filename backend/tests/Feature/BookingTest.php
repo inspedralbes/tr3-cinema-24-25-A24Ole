@@ -28,12 +28,14 @@ class BookingTest extends TestCase
             'price_base' => 10.00,
         ]);
         
-        $seat1 = \App\Models\Seat::create(['room_id' => $room->id, 'row_label' => 'A', 'seat_number' => 1, 'type' => 'standard']);
-        $seat2 = \App\Models\Seat::create(['room_id' => $room->id, 'row_label' => 'A', 'seat_number' => 2, 'type' => 'standard']);
+        $seat1_id = 'A1';
+        $seat2_id = 'A2';
 
         $response = $this->actingAs($user)->postJson('/api/bookings', [
             'session_id' => $session->id,
-            'seats' => [$seat1->id, $seat2->id],
+            'seats' => [$seat1_id, $seat2_id],
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
         ]);
 
         $response->assertStatus(201);
@@ -47,7 +49,7 @@ class BookingTest extends TestCase
         
         $this->assertDatabaseHas('seat_session', [
             'session_id' => $session->id,
-            'seat_id' => $seat1->id,
+            'seat_id' => $seat1_id,
             'status' => 'sold',
         ]);
     }
@@ -63,19 +65,21 @@ class BookingTest extends TestCase
             'start_at' => now()->addDay(),
             'price_base' => 10.00,
         ]);
-        $seat1 = \App\Models\Seat::create(['room_id' => $room->id, 'row_label' => 'A', 'seat_number' => 1, 'type' => 'standard']);
+        $seat1_id = 'A1';
 
         // Occupy the seat
         SeatSession::create([
             'session_id' => $session->id,
-            'seat_id' => $seat1->id,
+            'seat_id' => $seat1_id,
             'user_id' => $user->id,
             'status' => 'sold',
         ]);
 
         $response = $this->actingAs($user)->postJson('/api/bookings', [
             'session_id' => $session->id,
-            'seats' => [$seat1->id],
+            'seats' => [$seat1_id],
+            'name' => 'Jane Doe',
+            'email' => 'jane@example.com',
         ]);
 
         $response->assertStatus(409);

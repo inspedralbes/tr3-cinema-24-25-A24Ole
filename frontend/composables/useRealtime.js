@@ -9,6 +9,7 @@ const lockedSeats = ref(new Set()) // Set of seat IDs
 const queuePosition = ref(null)
 const startTransition = ref(false) // Trigger for waiting room exit
 const activeUsers = ref([])
+const currentRoomId = ref(null)
 
 export const useRealtime = () => {
   // const config = useRuntimeConfig()
@@ -16,11 +17,18 @@ export const useRealtime = () => {
   const SOCKET_URL = 'http://localhost:3002' 
   const router = useRouter()
 
-  const connect = () => {
+  const connect = (roomId) => {
     if (socket.value?.connected) return
+    if (!roomId) {
+        console.error('Realtime connection requires a roomId')
+        return
+    }
+
+    currentRoomId.value = roomId
 
     socket.value = io(SOCKET_URL, {
         transports: ['websocket'],
+        query: { roomId },
         autoConnect: true
     })
 

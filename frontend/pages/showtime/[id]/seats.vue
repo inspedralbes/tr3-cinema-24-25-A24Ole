@@ -56,7 +56,7 @@ const { initWebRTC, bindEvents, cleanup, sendCursorUpdate, cursors } = useWebRTC
 
 // Connect on mount
 onMounted(() => {
-    connect()
+    connect(route.params.id)
     bindEvents() // Bind WebRTC signal listeners
     
     // Mock Move Data if empty

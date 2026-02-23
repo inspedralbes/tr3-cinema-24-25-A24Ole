@@ -1,10 +1,21 @@
 <template>
   <aside class="w-full lg:w-[400px] glass border-l border-white/5 p-8 flex flex-col justify-between h-auto lg:min-h-[calc(100vh-80px)] backdrop-blur-xl bg-surface-100/50">
     <div>
-      <h3 class="text-lg font-bold uppercase tracking-tight mb-8 flex items-center gap-3">
-        <span class="w-1 h-6 bg-primary rounded-full shadow-[0_0_8px_rgba(242,13,51,0.8)]"></span>
-        Your Selection
-      </h3>
+      <div class="flex justify-between items-start mb-8">
+        <h3 class="text-lg font-bold uppercase tracking-tight flex items-center gap-3">
+          <span class="w-1 h-6 bg-primary rounded-full shadow-[0_0_8px_rgba(242,13,51,0.8)]"></span>
+          Your Selection
+        </h3>
+        
+        <!-- Timer Display -->
+        <div v-if="isActive" class="flex flex-col items-end">
+          <span class="text-[10px] uppercase font-bold text-white/40 tracking-widest mb-1">Seats Reserved</span>
+          <div class="bg-primary/20 border border-primary/50 text-white font-mono font-bold px-3 py-1 rounded-lg text-sm flex items-center gap-2 shadow-[0_0_10px_rgba(242,13,51,0.2)]">
+            <span class="material-symbols-outlined text-[14px] text-primary">timer</span>
+            {{ formattedTime }}
+          </div>
+        </div>
+      </div>
       
       <div v-if="selectedSeats.length === 0" class="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-white/5 rounded-xl bg-white/[0.02]">
         <span class="material-symbols-outlined text-4xl text-white/20 mb-3">event_seat</span>
@@ -62,11 +73,31 @@
 </template>
 
 <script setup>
-defineProps({
+import { watch, onMounted } from 'vue'
+import { useBookingTimer } from '@/composables/useBookingTimer'
+
+const props = defineProps({
   selectedSeats: Array
 })
 
 const emit = defineEmits(['remove', 'next'])
+
+const { startTimer, clearTimer, formattedTime, isActive } = useBookingTimer()
+
+watch(() => props.selectedSeats.length, (newLength) => {
+    if (newLength > 0 && !isActive.value) {
+        startTimer()
+    } else if (newLength === 0 && isActive.value) {
+        clearTimer()
+    }
+})
+
+// Just in case it mounts and we already have seats in store
+onMounted(() => {
+    if (props.selectedSeats.length > 0 && !isActive.value) {
+        startTimer()
+    }
+})
 
 const getSeatTypeLabel = (type) => {
   switch(type) {

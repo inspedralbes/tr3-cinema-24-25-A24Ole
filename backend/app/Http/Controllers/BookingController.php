@@ -20,7 +20,52 @@ class BookingController extends Controller
     {
         \Illuminate\Support\Facades\Log::info('Booking request received', ['data' => $request->all()]);
 
-        $session = Session::findOrFail($request->session_id);
+        $sessionId = $request->session_id;
+
+        $movieModel = null;
+        if ($request->has('movie') && $request->movie) {
+            $movieData = $request->movie;
+            $movieModel = \App\Models\Movie::updateOrCreate(
+                ['id' => $movieData['id']],
+                [
+                    'title' => $movieData['title'],
+                    'poster_url' => $movieData['poster_url'] ?? null,
+                    'duration_min' => $movieData['duration_min'] ?? 120
+                ]
+            );
+        }
+
+        $session = Session::find($sessionId);
+
+        if (!$session) {
+            // Auto-create room and session
+            $room = \App\Models\Room::firstOrCreate(
+                ['id' => 1],
+                ['name' => 'Main Room', 'rows_count' => 10, 'cols_count' => 10]
+            );
+
+            // If no movie payload was sent, ensure there's at least a dummy movie
+            if (!$movieModel) {
+                 $movieModel = \App\Models\Movie::firstOrCreate(
+                     ['id' => 1],
+                     ['title' => 'Unknown Movie', 'duration_min' => 120]
+                 );
+            }
+
+            $session = Session::create([
+                'id' => $sessionId,
+                'movie_id' => $movieModel->id,
+                'room_id' => $room->id,
+                'start_at' => now()->addDays(1),
+                'price_base' => 10.00,
+            ]);
+        } else {
+            // Ensure session points to the correct movie
+            if ($movieModel && $session->movie_id !== $movieModel->id) {
+                $session->movie_id = $movieModel->id;
+                $session->save();
+            }
+        }
 
         // Check availability
         $occupied = SeatSession::where('session_id', $session->id)
@@ -33,7 +78,7 @@ class BookingController extends Controller
             return response()->json(['message' => 'One or more seats are already occupied.'], 409);
         }
 
-        $totalPrice = count($request->seats) * $session->price_base;
+        $totalPrice = $request->input('total_price', count($request->seats) * $session->price_base);
         $user = $request->user();
         $userId = $user ? $user->id : null;
 
@@ -43,6 +88,8 @@ class BookingController extends Controller
                 'user_id' => $userId,
                 'total_price' => $totalPrice,
                 'status' => 'confirmed',
+                'name' => $request->name,
+                'email' => $request->email,
             ]);
 
             foreach ($request->seats as $seatId) {
@@ -63,5 +110,30 @@ class BookingController extends Controller
 
             return new BookingResource($booking);
         });
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        $booking = Booking::with(['session.movie', 'session.room'])->findOrFail($id);
+        
+        $seats = SeatSession::where('session_id', $booking->session_id)
+            ->where('user_id', $booking->user_id)
+            ->get();
+            
+        return response()->json([
+            'data' => [
+                'id' => $booking->id,
+                'name' => $booking->name,
+                'email' => $booking->email,
+                'total_price' => $booking->total_price,
+                'movie' => $booking->session->movie,
+                'room' => $booking->session->room,
+                'session' => $booking->session,
+                'seats' => $seats->pluck('seat_id'),
+            ]
+        ]);
     }
 }

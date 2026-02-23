@@ -11,6 +11,8 @@ class Booking extends Model
         'user_id',
         'total_price',
         'status',
+        'name',
+        'email',
     ];
 
     public function session()

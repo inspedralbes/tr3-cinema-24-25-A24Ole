@@ -20,11 +20,6 @@ class SeatSession extends Model
         return $this->belongsTo(Session::class);
     }
 
-    public function seat()
-    {
-        return $this->belongsTo(Seat::class);
-    }
-
     public function user()
     {
         return $this->belongsTo(User::class);

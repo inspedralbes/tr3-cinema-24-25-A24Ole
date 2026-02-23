@@ -22,9 +22,17 @@ class StoreBookingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'session_id' => ['required', 'integer', 'exists:sessions,id'],
+            'session_id' => ['required', 'integer'],
             'seats' => ['required', 'array', 'min:1'],
-            'seats.*' => ['integer', 'exists:seats,id'],
+            'seats.*' => ['required'], // Accept text identifiers like 'A1' or numbers like 1, 2 since Seats table is gone
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255'],
+            'total_price' => ['nullable', 'numeric'],
+            'movie' => ['nullable', 'array'],
+            'movie.id' => ['required_with:movie', 'integer'],
+            'movie.title' => ['required_with:movie', 'string'],
+            'movie.poster_url' => ['nullable', 'string'],
+            'movie.duration_min' => ['nullable', 'integer'],
         ];
     }
 }

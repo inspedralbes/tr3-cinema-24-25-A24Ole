@@ -74,7 +74,18 @@
     <!-- Sidebar Summary -->
     <aside class="w-full lg:w-[400px] glass border-l border-white/5 p-8 flex flex-col justify-between h-auto lg:h-[calc(100vh-80px)] backdrop-blur-xl bg-surface-100/50 sticky top-[80px]">
         <div>
-             <h3 class="text-xl font-black text-white uppercase tracking-tight mb-8">Order Summary</h3>
+             <div class="flex justify-between items-start mb-8">
+               <h3 class="text-xl font-black text-white uppercase tracking-tight">Order Summary</h3>
+               
+               <!-- Timer Display -->
+               <div v-if="isActive" class="flex flex-col items-end">
+                 <span class="text-[10px] uppercase font-bold text-white/40 tracking-widest mb-1">Seats Reserved</span>
+                 <div class="bg-primary/20 border border-primary/50 text-white font-mono font-bold px-3 py-1 rounded-lg text-sm flex items-center gap-2 shadow-[0_0_10px_rgba(242,13,51,0.2)]">
+                   <span class="material-symbols-outlined text-[14px] text-primary">timer</span>
+                   {{ formattedTime }}
+                 </div>
+               </div>
+             </div>
         
             <!-- Summary Content -->
             <div class="space-y-8">
@@ -143,17 +154,20 @@
 import { computed } from 'vue'
 import { useBookingStore } from '@/stores/booking'
 import { useBooking } from '@/composables/useBooking'
+import { useBookingTimer } from '@/composables/useBookingTimer'
 
 const bookingStore = useBookingStore()
 const { nextStep } = useBooking()
+const { formattedTime, isActive } = useBookingTimer()
 
 const availableTicketTypes = [
-    { id: 'adult', name: 'General Admission', price: 15.00 },
+    { id: 'adult', name: 'General Admission', price: 12.50 },
     { id: 'child', name: 'Child (3-12)', price: 10.00 },
     { id: 'member', name: 'Member Price', price: 12.00 },
     { id: 'senior', name: 'Senior (65+)', price: 10.00 },
     { id: 'student', name: 'Student', price: 12.50 },
-//    { id: 'vip', name: 'VIP Experience', price: 20.00 } // Could be tied to seat type?
+    { id: 'vip', name: 'VIP Experience', price: 18.50 },
+    { id: 'accessible', name: 'Accessible Seat', price: 10.00 }
 ]
 
 const selectTicketForSeat = (seatId, ticketTypeId) => {

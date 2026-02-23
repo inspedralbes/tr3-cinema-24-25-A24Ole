@@ -23,10 +23,14 @@
             Payment Method
           </h2>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="md:col-span-2 space-y-2">
-              <label class="text-xs font-bold uppercase tracking-widest text-secondary ml-1">Cardholder Name</label>
-              <input class="w-full h-14 bg-surface-200 border border-white/10 rounded-xl px-4 focus:ring-1 focus:ring-primary focus:border-primary focus:bg-surface-200 focus:shadow-[0_0_15px_rgba(242,13,51,0.2)] outline-none transition-all text-white placeholder-white/20 font-medium" placeholder="e.g. MARCUS AURELIUS" type="text"/>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="md:col-span-1 space-y-2">
+              <label class="text-xs font-bold uppercase tracking-widest text-secondary ml-1">Full Name *</label>
+              <input v-model="customerName" class="w-full h-14 bg-surface-200 border border-white/10 rounded-xl px-4 focus:ring-1 focus:ring-primary focus:border-primary focus:bg-surface-200 focus:shadow-[0_0_15px_rgba(242,13,51,0.2)] outline-none transition-all text-white placeholder-white/20 font-medium" placeholder="Marcus Aurelius" type="text" required/>
+            </div>
+            <div class="md:col-span-1 space-y-2">
+              <label class="text-xs font-bold uppercase tracking-widest text-secondary ml-1">Email Address *</label>
+              <input v-model="customerEmail" class="w-full h-14 bg-surface-200 border border-white/10 rounded-xl px-4 focus:ring-1 focus:ring-primary focus:border-primary focus:bg-surface-200 focus:shadow-[0_0_15px_rgba(242,13,51,0.2)] outline-none transition-all text-white placeholder-white/20 font-medium" placeholder="marcus@rome.com" type="email" required/>
             </div>
             
             <div class="md:col-span-2 space-y-2">
@@ -65,7 +69,18 @@
       <!-- Right Column: Order Summary -->
       <aside class="lg:col-span-5">
         <div class="bg-surface-100/80 border border-white/10 rounded-2xl p-6 lg:p-8 sticky top-32 backdrop-blur-md shadow-2xl">
-          <h2 class="text-2xl font-black mb-6 text-white uppercase tracking-tight">Booking Summary</h2>
+          <div class="flex justify-between items-start mb-6">
+            <h2 class="text-2xl font-black text-white uppercase tracking-tight">Booking Summary</h2>
+            
+            <!-- Timer Display -->
+            <div v-if="isActive" class="flex flex-col items-end">
+              <span class="text-[10px] uppercase font-bold text-white/40 tracking-widest mb-1">Seats Reserved</span>
+              <div class="bg-primary/20 border border-primary/50 text-white font-mono font-bold px-3 py-1 rounded-lg text-sm flex items-center gap-2 shadow-[0_0_10px_rgba(242,13,51,0.2)]">
+                <span class="material-symbols-outlined text-[14px] text-primary">timer</span>
+                {{ formattedTime }}
+              </div>
+            </div>
+          </div>
           
           <div class="flex gap-5 mb-8 group">
             <div class="w-28 h-40 rounded-lg overflow-hidden flex-shrink-0 bg-surface-200 shadow-lg border border-white/5 relative">
@@ -140,20 +155,36 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue' // Ensure onMounted is imported
+import { ref, onMounted } from 'vue' // Ensure onMounted is imported
 import { useBookingStore } from '@/stores/booking'
 import { useBookingSubmit } from '@/composables/useBookingSubmit'
 import { useRealtime } from '@/composables/useRealtime'
+import { useBookingTimer } from '@/composables/useBookingTimer'
 
 const bookingStore = useBookingStore()
 const { submitBooking, status, error } = useBookingSubmit()
 const { connect } = useRealtime()
+const { isActive, formattedTime } = useBookingTimer()
+
+const customerName = ref('')
+const customerEmail = ref('')
 
 onMounted(() => {
     connect()
+    
+    // Fallback if data is lost on page refresh
+    if (!bookingStore.currentMovie) {
+        bookingStore.setMovie({ 
+          id: 1, 
+          title: 'Neon Demon', 
+          poster: 'https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg', 
+          genre: 'Sci-Fi', 
+          duration: '2h', 
+        })
+    }
 })
 
 const handlePayment = async () => {
-    await submitBooking()
+    await submitBooking(customerName.value, customerEmail.value)
 }
 </script>
