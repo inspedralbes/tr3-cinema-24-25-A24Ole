@@ -1,0 +1,80 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: cinema_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/var/www/html
+    environment:
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=laravel
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+    depends_on:
+      - db
+    networks:
+      - cinema_network
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: cinema_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # Prevent overwriting node_modules with host folder
+    depends_on:
+      - backend
+    networks:
+      - cinema_network
+
+  realtime:
+    build:
+      context: ./realtime
+    container_name: cinema_realtime
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./realtime:/app
+      - /app/node_modules # Prevent overwriting node_modules with host folder
+    networks:
+      - cinema_network
+
+  db:
+    image: mysql:8.0
+    container_name: cinema_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - cinema_network
+
+  adminer:
+    image: adminer
+    container_name: cinema_adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - cinema_network
+    depends_on:
+      - db
+
+networks:
+  cinema_network:
+    driver: bridge
+
+volumes:
+  db_data:

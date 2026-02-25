@@ -20,8 +20,11 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     public: {
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:8000/api',
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || '/api',
       socketUrl: process.env.SOCKET_URL || 'http://localhost:3000'
     }
+  },
+  routeRules: {
+    '/api/**': { proxy: 'http://backend:8000/api/**' }
   }
 })
