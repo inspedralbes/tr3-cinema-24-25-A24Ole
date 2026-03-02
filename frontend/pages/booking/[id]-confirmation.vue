@@ -22,36 +22,46 @@
       <!-- Gradient Top Line -->
       <div class="w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent"></div>
       
-      <div class="p-8 flex flex-col md:flex-row gap-8 items-center">
-        <!-- QR Code Simulation -->
-        <div class="bg-white p-4 rounded-xl shrink-0 shadow-lg rotate-2 hover:rotate-0 transition-transform duration-300">
-          <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=Booking_${booking.id}`" alt="QR Code" class="size-32 mix-blend-multiply">
+      <div class="p-8 flex flex-col md:flex-row gap-8 items-center md:items-stretch">
+        <!-- Movie Poster Showcase -->
+        <div class="w-full md:w-48 shrink-0 rounded-xl overflow-hidden shadow-[0_0_30px_rgba(242,13,51,0.2)] border border-white/10 relative group">
+           <img v-if="booking.pelicula?.poster_url" :src="booking.pelicula.poster_url" :alt="booking.pelicula?.titulo" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+           <div v-else class="w-full h-full min-h-[250px] bg-surface-200 flex items-center justify-center text-white/20 font-bold uppercase text-sm">No Poster</div>
+           <div class="absolute inset-0 bg-gradient-to-t from-void/90 via-transparent to-transparent"></div>
         </div>
 
-        <div class="text-left space-y-5 flex-1 w-full">
+        <div class="text-left flex-1 w-full flex flex-col justify-center space-y-5">
           <div class="border-b border-white/5 pb-5">
-            <h3 class="text-2xl font-black text-white uppercase tracking-tight mb-2">{{ booking.movie?.title || 'Unknown Movie' }}</h3>
-            <p class="text-primary font-bold uppercase tracking-widest text-xs bg-primary/10 px-2 py-1 rounded w-fit">{{ booking.room?.name || 'Hall' }} • Seats {{ booking.seats.map(s => s.seat_number).join(', ') }}</p>
+             <h3 class="text-2xl font-black text-white uppercase tracking-tight mb-2">{{ booking.pelicula?.titulo || 'Unknown Movie' }}</h3>
+             <p class="text-primary font-bold uppercase tracking-widest text-xs bg-primary/10 px-2 py-1 rounded w-fit">{{ booking.sesion?.sala || booking.room?.name || 'Hall' }} • Seats {{ booking.asientos?.join(', ') || booking.seats?.join(', ') }}</p>
           </div>
           
           <div class="grid grid-cols-2 gap-x-8 gap-y-4 text-sm">
-            <div>
-              <p class="text-secondary text-xs uppercase tracking-widest font-bold mb-1">Date</p>
-              <p class="text-white font-medium">{{ formatDate(booking.session?.start_at) }}</p>
-            </div>
-            <div>
-              <p class="text-secondary text-xs uppercase tracking-widest font-bold mb-1">Time</p>
-              <p class="text-white font-medium">{{ formatTime(booking.session?.start_at) }}</p>
-            </div>
-            <div>
-              <p class="text-secondary text-xs uppercase tracking-widest font-bold mb-1">Order ID</p>
-              <p class="text-white font-medium font-mono text-xs opacity-70">#{{ booking.id }}</p>
-            </div>
              <div>
-              <p class="text-secondary text-xs uppercase tracking-widest font-bold mb-1">Total Paid</p>
-              <p class="text-primary font-black text-lg neon-text">${{ Number(booking.total_price).toFixed(2) }}</p>
-            </div>
+                <p class="text-secondary text-xs uppercase tracking-widest font-bold mb-1">Date</p>
+                <p class="text-white font-medium">{{ formatDate(new Date()) }}</p>
+             </div>
+             <div>
+                <p class="text-secondary text-xs uppercase tracking-widest font-bold mb-1">Time</p>
+                <p class="text-white font-medium">(En implementacion)</p>
+             </div>
+             <div>
+                <p class="text-secondary text-xs uppercase tracking-widest font-bold mb-1">Order ID</p>
+                <p class="text-white font-medium font-mono text-xs opacity-70">#{{ booking.id }}</p>
+             </div>
+             <div>
+                <p class="text-secondary text-xs uppercase tracking-widest font-bold mb-1">Total Paid</p>
+                <p class="text-primary font-black text-lg neon-text">${{ Number(booking.total_pagado || booking.total_price || 0).toFixed(2) }}</p>
+             </div>
           </div>
+        </div>
+
+        <!-- Ticket QR Code -->
+        <div class="w-full md:w-auto shrink-0 flex flex-col items-center justify-center p-4 bg-white/5 rounded-xl border border-white/10 relative overflow-hidden group">
+            <div class="bg-white p-3 rounded-lg shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform duration-500 group-hover:scale-105">
+                <img :src="`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=CinemaFlow_Booking_${booking.id}`" alt="Ticket QR" class="size-28 mix-blend-multiply">
+            </div>
+            <p class="text-secondary/50 text-[10px] uppercase tracking-widest font-bold mt-4 font-mono group-hover:text-primary transition-colors">Scan to Enter</p>
         </div>
       </div>
     </div>
@@ -72,7 +82,7 @@ import { useRoute, useRuntimeConfig } from '#imports'
 const route = useRoute()
 const config = useRuntimeConfig()
 
-const { data: responseData, pending, error } = await useFetch(`${config.public.apiBase || '/api'}/bookings/${route.params.id}`)
+const { data: responseData, pending, error } = await useFetch(`${config.public.apiBase || '/api'}/reservas/${route.params.id}`)
 
 const booking = computed(() => responseData.value?.data)
 

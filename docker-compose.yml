@@ -1,6 +1,6 @@
 version: "3.8"
 
-services:
+services: 
   backend:
     build:
       context: ./backend
@@ -13,11 +13,16 @@ services:
       - DB_CONNECTION=mysql
       - DB_HOST=db
       - DB_PORT=3306
-      - DB_DATABASE=laravel
+      - DB_DATABASE=cinema
       - DB_USERNAME=root
       - DB_PASSWORD=root
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=mailpit
+      - MAIL_PORT=1025
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    command: sh -c "php artisan migrate --force && php artisan app:sincronizar-peliculas && php artisan serve --host=0.0.0.0 --port=8000"
     networks:
       - cinema_network
 
@@ -52,14 +57,19 @@ services:
     container_name: cinema_db
     restart: always
     environment:
-      MYSQL_DATABASE: laravel
+      MYSQL_DATABASE: cinema
       MYSQL_ROOT_PASSWORD: root
-    ports:
+    ports:   
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - cinema_network
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   adminer:
     image: adminer
@@ -71,6 +81,16 @@ services:
       - cinema_network
     depends_on:
       - db
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: cinema_mailpit
+    restart: always
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - cinema_network
 
 networks:
   cinema_network:

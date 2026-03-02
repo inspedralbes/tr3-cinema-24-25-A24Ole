@@ -6,8 +6,8 @@
     <!-- Background Image -->
     <div class="absolute inset-0 z-0">
       <img
-        :src="movie.poster"
-        :alt="movie.title"
+        :src="movie.poster_url"
+        :alt="movie.titulo"
         class="w-full h-full object-cover opacity-60"
       />
       <div
@@ -23,21 +23,21 @@
       <span
         class="inline-block px-3 py-1 mb-6 text-xs font-bold tracking-[0.2em] text-primary border border-primary/30 rounded-full uppercase bg-primary/10 backdrop-blur-md"
       >
-        Premiering Now: {{ movie.genre }}
+        Premiering Now: {{ movie.genero }}
       </span>
       <h1
         class="text-5xl md:text-7xl lg:text-8xl font-black text-white uppercase tracking-tighter mb-6 leading-[0.9]"
       >
-        {{ getFirstWord(movie.title) }}
+        {{ getFirstWord(movie.titulo) }}
         <span
           class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-rose-500 neon-text"
-          >{{ getRestOfTitle(movie.title) }}</span
+          >{{ getRestOfTitle(movie.titulo) }}</span
         >
       </h1>
       <p
         class="text-lg md:text-xl text-gray-300 max-w-2xl mb-10 leading-relaxed font-light"
       >
-        {{ movie.description }}
+        {{ movie.descripcion }}
       </p>
 
       <div class="flex flex-wrap gap-4">

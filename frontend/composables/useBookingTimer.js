@@ -34,6 +34,12 @@ export const useBookingTimer = () => {
         if (intervalId) clearInterval(intervalId)
         
         intervalId = setInterval(() => {
+            // If another instance cleared the timer, just stop our interval and exit
+            if (expiresAt.value === 0) {
+                clearTimer()
+                return
+            }
+
             timeLeft.value = calculateTimeLeft()
             
             if (timeLeft.value <= 0) {
@@ -57,12 +63,15 @@ export const useBookingTimer = () => {
         alert('Your session has expired. The seats have been released.')
         
         // Redirect back to the seat map (assuming we have a session ID, if not, go home)
-        const sessionId = store.currentSession?.id || 1
+        const sessionId = store.currentMovie?.id_pelicula_api || store.currentMovie?.id || 1
         router.push(`/showtime/${sessionId}/seats`)
     }
 
     const formattedTime = computed(() => {
-        if (timeLeft.value <= 0) return '00:00'
+        if (expiresAt.value === 0 && timeLeft.value === 0) return '00:00' // Show 00:00 if legitimately empty
+        if (timeLeft.value <= 0 && expiresAt.value > 0) return '00:00' // Show 00:00 if expired natural
+        
+        // If it's effectively frozen (e.g. during checkout transition), cache the last known value visually
         const minutes = Math.floor(timeLeft.value / 60)
         const seconds = timeLeft.value % 60
         return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
@@ -73,7 +82,7 @@ export const useBookingTimer = () => {
         // If there's an active timer in storage, resume it
         if (expiresAt.value && expiresAt.value > Date.now()) {
             startTimer()
-        } else if (expiresAt.value && expiresAt.value <= Date.now()) {
+        } else if (expiresAt.value !== 0 && expiresAt.value <= Date.now()) {
              // It expired while we were away
              handleExpiration()
         }

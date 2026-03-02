@@ -96,7 +96,7 @@
                           </div>
                           <div>
                             <p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">Movie</p>
-                            <span class="text-white font-bold text-lg leading-tight block">{{ bookingStore.currentMovie?.title || 'Neon Demon' }}</span>
+                            <span class="text-white font-bold text-lg leading-tight block">{{ bookingStore.currentMovie?.titulo || 'Neon Demon' }}</span>
                           </div>
                       </div>
                       <div class="flex items-start gap-4 text-sm text-secondary group">
@@ -151,10 +151,13 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { useBookingStore } from '@/stores/booking'
 import { useBooking } from '@/composables/useBooking'
 import { useBookingTimer } from '@/composables/useBookingTimer'
+
+const route = useRoute()
 
 const bookingStore = useBookingStore()
 const { nextStep } = useBooking()
@@ -178,6 +181,19 @@ const selectTicketForSeat = (seatId, ticketTypeId) => {
 }
 
 const assignedCount = computed(() => Object.keys(bookingStore.selectedTickets).length)
+
+onMounted(() => {
+    // Fallback if data is lost on page refresh
+    if (!bookingStore.currentMovie) {
+        const config = useRuntimeConfig()
+        $fetch(`${config.public.apiBase || '/api'}/pelicula/${route.params.id}`)
+            .then(res => {
+                const movie = res.data || res
+                bookingStore.setMovie(movie)
+            })
+            .catch(err => console.error("Failed to fetch movie:", err))
+    }
+})
 
 const handleNext = () => {
     nextStep('tickets')

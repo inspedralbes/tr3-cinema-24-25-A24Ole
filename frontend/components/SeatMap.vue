@@ -47,7 +47,7 @@
             v-for="seat in row.seats"
             :key="seat.id"
             @click="handleSeatClick(seat)"
-            :disabled="seat.status === 'occupied' || seat.status === 'blocked'"
+            :disabled="seat.status === 'occupied' || seat.status === 'blocked' || isLockedByOther(seat)"
             class="w-8 h-8 rounded transition-all duration-300 flex items-center justify-center relative group"
             :class="getSeatClasses(seat)"
           >
@@ -61,7 +61,7 @@
             <span v-if="seat.type === 'disabled'" class="material-symbols-outlined text-[14px] text-blue-400/80">accessible</span>
 
             <!-- Lock Icon for Blocked -->
-            <span v-if="seat.status === 'blocked'" class="material-symbols-outlined text-[14px] text-white/40">lock</span>
+            <span v-if="seat.status === 'blocked' || isLockedByOther(seat)" class="material-symbols-outlined text-[14px] text-white/40">lock</span>
           </button>
         </div>
         <span class="text-white/20 text-xs font-bold w-4">{{ row.label }}</span>
@@ -93,16 +93,14 @@ const props = defineProps({
 const emit = defineEmits(['toggle-seat', 'mouse-move'])
 
 const handleMouseMove = (e) => {
-    // We emit relative coordinates or something, but simple-peer sends whatever we give.
-    // Let's send localized coordinates relative to the grid container if possible, 
-    // or just the event. But parent handles the logic.
-    // For simplicity, let's just emit the event payload the parent expects.
-    // Actually, sending pageX/pageY is easiest relative to the viewport if we assume standard view.
-    // Better: Send relative to the component `el`.
     const rect = e.currentTarget.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     emit('mouse-move', { x, y })
+}
+
+const isLockedByOther = (seat) => {
+  return props.lockedSeats.has(seat.id) && !props.selectedSeats.some(s => s.id === seat.id)
 }
 
 const handleSeatClick = (seat) => {

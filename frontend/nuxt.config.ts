@@ -17,6 +17,9 @@ export default defineNuxtConfig({
   alias: {
     '~': './'
   },
+  app: {
+    pageTransition: { name: 'page', mode: 'out-in' }
+  },
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     public: {

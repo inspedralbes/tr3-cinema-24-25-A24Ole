@@ -41,7 +41,7 @@ const {
   data: movies,
   pending,
   error,
-} = await useFetch(`${config.public.apiBase}/movies`);
+} = await useFetch(`/api/peliculas`);
 
 // Fallback to empty array if fetch fails or returns null
 if (!movies.value) movies.value = [];
@@ -52,7 +52,7 @@ const featuredMovie = computed(() => {
 
 const filteredMovies = computed(() => {
   if (activeFilter.value === "All") return movies.value;
-  return movies.value.filter((m) => m.genre.includes(activeFilter.value));
+  return movies.value.filter((m) => m.genero.includes(activeFilter.value));
 });
 
 const handleMovieSelect = (movie) => {

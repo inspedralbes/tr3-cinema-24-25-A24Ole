@@ -12,12 +12,18 @@
           Live Session
         </div>
         <div class="mt-8 text-center" v-if="bookingStore.currentMovie">
-          <h1 class="text-3xl font-black uppercase tracking-tighter">{{ bookingStore.currentMovie.title }}</h1>
+          <h1 class="text-3xl font-black uppercase tracking-tighter">{{ bookingStore.currentMovie.titulo }}</h1>
           <p class="text-white/40 text-sm mt-1 uppercase tracking-[0.2em]">Hall 4 • Today, 8:30 PM • 4K Dolby Atmos</p>
         </div>
       </div>
 
+      <div v-if="isConnecting" class="w-full h-96 flex flex-col items-center justify-center gap-4 animate-pulse pt-20">
+        <div class="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
+        <span class="text-xs uppercase tracking-[0.3em] font-bold text-white/50">Syncing Live Room...</span>
+      </div>
+
       <SeatMap 
+        v-else
         :rows="seatRows" 
         :selected-seats="bookingStore.selectedSeats"
         :locked-seats="lockedSeats"
@@ -51,7 +57,7 @@ const route = useRoute()
 const bookingStore = useBookingStore()
 const { nextStep } = useBooking()
 const { toggleSeat } = useSeatLogic()
-const { socket, isConnected, lockedSeats, activeUsers, connect, disconnect } = useRealtime()
+const { socket, isConnecting, isConnected, lockedSeats, activeUsers, connect, disconnect } = useRealtime()
 const { initWebRTC, bindEvents, cleanup, sendCursorUpdate, cursors } = useWebRTC(socket)
 
 // Connect on mount
@@ -59,15 +65,13 @@ onMounted(() => {
     connect(route.params.id)
     bindEvents() // Bind WebRTC signal listeners
     
-    // Mock Move Data if empty
     if (!bookingStore.currentMovie) {
-        bookingStore.setMovie({ 
-          id: 1, 
-          title: 'Neon Demon', 
-          poster: 'https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg', 
-          genre: 'Sci-Fi', 
-          duration: '2h', 
-        })
+        $fetch(`/api/pelicula/${route.params.id}`)
+            .then(res => {
+                const movie = res.data || res
+                bookingStore.setMovie(movie)
+            })
+            .catch(err => console.error("Failed to fetch movie:", err))
     }
 })
 

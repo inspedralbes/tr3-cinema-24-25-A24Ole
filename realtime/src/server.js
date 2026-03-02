@@ -91,6 +91,21 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('request:purchase', (seatIds) => {
+        if (!Array.isArray(seatIds)) return;
+        
+        seatIds.forEach(seatId => {
+            const lock = room.lockedSeats.get(seatId);
+            // Only the owner can mark it as purchased 
+            if (lock && lock.socketId === socket.id) {
+                clearTimeout(lock.timeoutId);
+                room.lockedSeats.delete(seatId); // Stop tracking it as a temporary lock
+                io.to(roomId).emit('seat:purchased', seatId);
+                console.log(`[Room ${roomId}] Seat ${seatId} purchased by ${socket.id}`);
+            }
+        });
+    });
+
     // --- WebRTC Signaling ---
     // When a user is granted access, send them the list of other active users to initiate connections
     socket.on('signal', (data) => {
