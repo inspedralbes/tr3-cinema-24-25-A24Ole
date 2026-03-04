@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full flex flex-col items-center">
+  <div class="w-full flex flex-col items-center" @mousemove="handleMouseMove">
     <!-- Screen Representation -->
     <div class="w-full max-w-2xl mb-14 relative">
       <div class="screen-curve h-12 w-full flex items-end justify-center">
@@ -93,7 +93,10 @@ const props = defineProps({
 const emit = defineEmits(['toggle-seat', 'mouse-move'])
 
 const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect()
+    const target = e.currentTarget || e.target
+    if (!target) return
+    const rect = target.getBoundingClientRect()
+    if (!rect) return
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     emit('mouse-move', { x, y })
