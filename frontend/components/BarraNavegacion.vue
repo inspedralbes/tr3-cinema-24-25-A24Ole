@@ -18,12 +18,28 @@
     </nav>
 
     <div class="flex items-center gap-4">
-      <button class="group flex items-center justify-center rounded-full size-10 bg-surface-200 border border-white/5 text-white transition-all hover:bg-primary hover:border-primary hover:shadow-[0_0_15px_rgba(242,13,51,0.4)]">
-        <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">person</span>
+      <button @click="handleAdminToggle" :class="['group flex items-center justify-center rounded-full size-10 border transition-all hover:bg-primary hover:border-primary hover:shadow-[0_0_15px_rgba(242,13,51,0.4)]', isAdmin ? 'bg-primary border-primary shadow-[0_0_15px_rgba(242,13,51,0.4)] text-white' : 'bg-surface-200 border-white/5 text-white']" title="Toggle Admin Mode">
+        <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">
+          {{ isAdmin ? 'admin_panel_settings' : 'person' }}
+        </span>
       </button>
     </div>
   </header>
 </template>
 
 <script setup>
+import { useAdmin } from '@/composables/useAdmin'
+import { useRouter } from 'vue-router'
+
+const { isAdmin, toggleAdmin } = useAdmin()
+const router = useRouter()
+
+const handleAdminToggle = () => {
+  toggleAdmin()
+  if (isAdmin.value) {
+    router.push('/admin')
+  } else {
+    router.push('/')
+  }
+}
 </script>

@@ -64,7 +64,7 @@ export const useBookingTimer = () => {
         
         // Redirect back to the seat map (assuming we have a session ID, if not, go home)
         const sessionId = store.currentMovie?.id_pelicula_api || store.currentMovie?.id || 1
-        router.push(`/showtime/${sessionId}/seats`)
+        router.push(`/sesion/${sessionId}/asientos`)
     }
 
     const formattedTime = computed(() => {

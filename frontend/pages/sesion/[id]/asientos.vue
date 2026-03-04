@@ -22,7 +22,7 @@
         <span class="text-xs uppercase tracking-[0.3em] font-bold text-white/50">Syncing Live Room...</span>
       </div>
 
-      <SeatMap 
+      <MapaAsientos 
         v-else
         :rows="seatRows" 
         :selected-seats="bookingStore.selectedSeats"
@@ -34,7 +34,7 @@
     </section>
 
     <!-- Right Section: Sidebar -->
-    <BookingSidebar 
+    <BarraLateralReserva 
       :selected-seats="bookingStore.selectedSeats" 
       @remove="toggleSeat"
       @next="handleNext"
@@ -50,8 +50,8 @@ import { useBooking } from '@/composables/useBooking'
 import { useRealtime } from '@/composables/useRealtime'
 import { useWebRTC } from '@/composables/useWebRTC'
 import { useSeatLogic } from '@/composables/useSeatLogic'
-import BookingSidebar from '@/components/booking/BookingSidebar.vue'
-import SeatMap from '@/components/SeatMap.vue'
+import BarraLateralReserva from '@/components/reserva/BarraLateralReserva.vue'
+import MapaAsientos from '@/components/MapaAsientos.vue'
 
 const route = useRoute()
 const bookingStore = useBookingStore()

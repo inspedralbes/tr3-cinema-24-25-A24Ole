@@ -21,7 +21,7 @@ export const useBooking = () => {
                     alert('Please select at least one seat.')
                     return
                 }
-                router.push(`/showtime/${sessionId}/tickets`)
+                router.push(`/sesion/${sessionId}/entradas`)
                 break
             case 'tickets':
                 // Verify all seats have ticket types
@@ -30,11 +30,11 @@ export const useBooking = () => {
                     alert('Please select a ticket type for all seats.')
                     return // Allow proceeding for now for demo? No, strict.
                 }
-                router.push(`/showtime/${sessionId}/checkout`)
+                router.push(`/sesion/${sessionId}/pago`)
                 break
             case 'checkout':
                 // Payment processing mock
-                router.push(`/booking/${Math.random().toString(36).substring(7)}-confirmation`)
+                router.push(`/reserva/${Math.random().toString(36).substring(7)}-confirmacion`)
                 break
         }
     }

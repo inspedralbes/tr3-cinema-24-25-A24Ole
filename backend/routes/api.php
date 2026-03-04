@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PeliculaController;
 use App\Http\Controllers\Api\ReservaController;
+use App\Http\Controllers\Api\AdminController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -14,3 +15,6 @@ Route::get('/pelicula/{id}', [PeliculaController::class, 'show']);
 Route::post('/reservas', [ReservaController::class, 'store']);
 Route::get('/reservas/{id}', [ReservaController::class, 'show']);
 Route::get('/peliculas/{id}/asientos-ocupados', [ReservaController::class, 'getOcupadosByPelicula']);
+
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+Route::get('/admin/reports', [AdminController::class, 'reports']);

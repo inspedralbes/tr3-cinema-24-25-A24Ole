@@ -72,7 +72,7 @@ export const useBookingSubmit = () => {
             const bookingId = parsedResponse.id || Math.random().toString(36).substring(7)
             
             // Navigate away first
-            router.push(`/booking/${bookingId}-confirmation`)
+            router.push(`/reserva/${bookingId}-confirmacion`)
             
             // Clear store and timer after a long enough delay so the transition finishes with data intact
             setTimeout(() => {

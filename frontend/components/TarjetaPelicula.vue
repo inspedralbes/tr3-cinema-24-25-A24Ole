@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink :to="`/showtime/${movie.id}/seats`" class="group relative block rounded-xl overflow-hidden bg-surface-100 border border-white/5 transition-all duration-500 hover:border-primary/50 hover:shadow-[0_0_30px_rgba(242,13,51,0.15)]">
+  <NuxtLink :to="`/sesion/${movie.id}/asientos`" class="group relative block rounded-xl overflow-hidden bg-surface-100 border border-white/5 transition-all duration-500 hover:border-primary/50 hover:shadow-[0_0_30px_rgba(242,13,51,0.15)]">
     <!-- Poster Image -->
     <div class="aspect-[2/3] w-full relative overflow-hidden">
       <img :src="movie.poster_url" :alt="movie.titulo" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1">

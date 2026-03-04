@@ -1,7 +1,7 @@
 <template>
   <div class="pb-20">
     <!-- Hero Section -->
-    <HeroSection :movie="featuredMovie" @book="handleMovieSelect" />
+    <SeccionPrincipal :movie="featuredMovie" @book="handleMovieSelect" />
 
     <!-- Movie Listings -->
     <div class="max-w-7xl mx-auto px-6">
@@ -18,10 +18,10 @@
         </div>
 
         <!-- Filter/Controls -->
-        <MovieFilters v-model="activeFilter" />
+        <FiltrosPeliculas v-model="activeFilter" />
       </div>
 
-      <MovieGrid :movies="filteredMovies" @select="handleMovieSelect" />
+      <CuadriculaPeliculas :movies="filteredMovies" @select="handleMovieSelect" />
     </div>
   </div>
 </template>
@@ -29,9 +29,9 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useBookingStore } from "@/stores/booking";
-import HeroSection from "@/components/home/HeroSection.vue";
-import MovieFilters from "@/components/home/MovieFilters.vue";
-import MovieGrid from "@/components/home/MovieGrid.vue";
+import SeccionPrincipal from "@/components/inicio/SeccionPrincipal.vue";
+import FiltrosPeliculas from "@/components/inicio/FiltrosPeliculas.vue";
+import CuadriculaPeliculas from "@/components/inicio/CuadriculaPeliculas.vue";
 
 const bookingStore = useBookingStore();
 const activeFilter = ref("All");

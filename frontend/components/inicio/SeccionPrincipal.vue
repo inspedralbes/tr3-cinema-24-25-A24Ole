@@ -42,7 +42,7 @@
 
       <div class="flex flex-wrap gap-4">
         <NuxtLink
-          :to="`/showtime/${movie.id}/seats`"
+          :to="`/sesion/${movie.id}/asientos`"
           @click="emit('book', movie)"
           class="px-8 py-4 bg-primary text-white font-bold uppercase text-sm tracking-widest rounded-lg shadow-[0_0_20px_rgba(242,13,51,0.5)] hover:bg-red-600 hover:scale-105 transition-all flex items-center gap-3"
         >

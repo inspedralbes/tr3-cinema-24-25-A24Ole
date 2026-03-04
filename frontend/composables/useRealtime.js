@@ -89,8 +89,8 @@ export const useRealtime = () => {
     socket.value.on('access:queued', (data) => {
         queuePosition.value = data.position
         // Redirect to waiting room if not already there
-        if (router.currentRoute.value.path !== '/waiting-room') {
-            router.push('/waiting-room')
+        if (router.currentRoute.value.path !== '/sala-espera') {
+            router.push('/sala-espera')
         }
     })
 
