@@ -67,4 +67,11 @@ class AdminController extends Controller
             'total_capacity' => $totalCapacity,
         ]);
     }
+
+    public function resetPelicula($id)
+    {
+        Asiento::where('pelicula_id', $id)->delete();
+        Reserva::where('pelicula_id', $id)->delete();
+        return response()->json(['message' => 'Reservas eliminadas correctamente.']);
+    }
 }

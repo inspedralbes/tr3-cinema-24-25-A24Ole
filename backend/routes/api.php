@@ -18,3 +18,4 @@ Route::get('/peliculas/{id}/asientos-ocupados', [ReservaController::class, 'getO
 
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 Route::get('/admin/reports', [AdminController::class, 'reports']);
+Route::delete('/admin/pelicula/{id}/reset', [AdminController::class, 'resetPelicula']);

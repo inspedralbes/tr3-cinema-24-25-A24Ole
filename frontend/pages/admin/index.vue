@@ -99,6 +99,14 @@
                   <span class="text-secondary">Locked Pending</span>
                   <span class="font-bold text-primary">{{ getRoomStats(movie.id).lockedSeats }}</span>
                 </div>
+
+                <button
+                  @click="resetPelicula(movie.id)"
+                  class="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-red-900/30 border border-red-500/20 text-red-400 text-xs font-bold uppercase tracking-wider hover:bg-red-500/20 hover:border-red-500/40 transition-all"
+                >
+                  <span class="material-symbols-outlined text-[16px]">restart_alt</span>
+                  Reiniciar Reservas
+                </button>
               </div>
             </div>
           </div>
@@ -126,7 +134,7 @@ if (!isAdmin.value) {
 const realtimeState = ref(null)
 let pollInterval = null
 
-const { data: dashboardData, pending } = useLazyFetch(`${config.public.apiBase}/admin/dashboard`)
+const { data: dashboardData, pending, refresh: refreshDashboard } = useLazyFetch(`${config.public.apiBase}/admin/dashboard`)
 
 const fetchRealtimeState = async () => {
   try {
@@ -145,6 +153,15 @@ const getRoomStats = (movieId) => {
     // Server uses roomId which we set as movieId in string
     const room = realtimeState.value.rooms.find(r => r.roomId === String(movieId))
     return room || { activeUsers: 0, lockedSeats: 0 }
+}
+
+const resetPelicula = async (movieId) => {
+  try {
+    await $fetch(`${config.public.apiBase}/admin/pelicula/${movieId}/reset`, { method: 'DELETE' })
+    await refreshDashboard()
+  } catch (e) {
+    console.error('Error al reiniciar reservas', e)
+  }
 }
 
 onMounted(() => {
