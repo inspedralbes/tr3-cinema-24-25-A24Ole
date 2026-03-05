@@ -40,7 +40,7 @@ class AdminController extends Controller
         $totalRevenue = Reserva::sum('total_pagado');
         
         $revenueByType = Asiento::where('estado', 'pagado')
-            ->select('tipo', DB::raw('count(*) as count'), DB::raw('sum(10.00) as revenue')) // Assuming $10 base, need to check DB schema but it's a simplification, or we join reservas.
+            ->select('tipo', DB::raw('count(*) as count'), DB::raw('sum(CASE WHEN tipo = "vip" THEN 18.50 WHEN tipo = "minusvalido" THEN 10.00 ELSE 12.50 END) as revenue'))
             ->groupBy('tipo')
             ->get();
             

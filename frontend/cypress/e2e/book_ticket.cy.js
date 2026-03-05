@@ -7,9 +7,15 @@ describe('Booking Flow - The Lord of the Rings', () => {
     // Clicking the h3 within the NuxtLink should trigger the navigation.
     cy.contains('h3', 'The Lord of the Rings', { timeout: 10000 }).click()
 
+    // Wait for the backend to return occupied seats before selecting a seat
+    cy.intercept('GET', '**/asientos-ocupados').as('getOccupiedSeats')
+
     // 2. We should now be on the seats selection page
     cy.url().should('include', '/asientos')
     cy.get('.screen-curve', { timeout: 10000 }).should('be.visible') // Wait for seats to render
+
+    // Cypress is faster than the network. Wait until the occupied seats are identified and blocked!
+    cy.wait('@getOccupiedSeats')
 
     // Find the first available seat within the seating grid and click it
     // Ensure we scope it to the .grid so we don't accidentally click nav bar buttons

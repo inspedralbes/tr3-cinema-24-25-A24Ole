@@ -12,13 +12,13 @@
     </div>
     
     <nav class="hidden md:flex items-center gap-8">
-      <NuxtLink to="/" class="text-sm font-semibold tracking-wide text-secondary hover:text-white transition-colors uppercase relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Movies</NuxtLink>
-      <a href="#" class="text-sm font-semibold tracking-wide text-secondary hover:text-white transition-colors uppercase relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Theaters</a>
-      <a href="#" class="text-sm font-semibold tracking-wide text-secondary hover:text-white transition-colors uppercase relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-px after:bg-primary after:transition-all after:duration-300 hover:after:w-full">Promotions</a>
+      <NuxtLink to="/" class="nav-link">Movies</NuxtLink>
+      <a href="#" class="nav-link">Theaters</a>
+      <a href="#" class="nav-link">Promotions</a>
     </nav>
 
     <div class="flex items-center gap-4">
-      <button @click="handleAdminToggle" :class="['group flex items-center justify-center rounded-full size-10 border transition-all hover:bg-primary hover:border-primary hover:shadow-[0_0_15px_rgba(242,13,51,0.4)]', isAdmin ? 'bg-primary border-primary shadow-[0_0_15px_rgba(242,13,51,0.4)] text-white' : 'bg-surface-200 border-white/5 text-white']" title="Toggle Admin Mode">
+      <button @click="handleAdminToggle" :class="['admin-toggle-btn group', isAdmin ? 'active' : '']" title="Toggle Admin Mode">
         <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">
           {{ isAdmin ? 'admin_panel_settings' : 'person' }}
         </span>
@@ -43,3 +43,19 @@ const handleAdminToggle = () => {
   }
 }
 </script>
+
+<style scoped>
+.admin-toggle-btn {
+  @apply flex items-center justify-center rounded-full size-10 border bg-surface-200 border-white/5 text-white transition-all;
+}
+
+.admin-toggle-btn:hover {
+  @apply bg-primary border-primary;
+  box-shadow: 0 0 15px rgba(242, 13, 51, 0.4);
+}
+
+.admin-toggle-btn.active {
+  @apply bg-primary border-primary text-white;
+  box-shadow: 0 0 15px rgba(242, 13, 51, 0.4);
+}
+</style>

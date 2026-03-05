@@ -33,7 +33,7 @@ export const useBookingSubmit = () => {
 
         try {
             const payload = {
-                pelicula_id: route.params?.id || store.currentMovie?.id_pelicula_api || store.currentMovie?.id || 1,
+                pelicula_id: route.params?.id || store.currentMovie?.id_pelicula_api || store.currentMovie?.id,
                 seats: store.selectedSeats.map(seat => seat.id),
                 name: customerName,
                 email: customerEmail,

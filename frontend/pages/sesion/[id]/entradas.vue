@@ -186,7 +186,7 @@ onMounted(() => {
     // Fallback if data is lost on page refresh
     if (!bookingStore.currentMovie) {
         const config = useRuntimeConfig()
-        $fetch(`${config.public.apiBase || '/api'}/pelicula/${route.params.id}`)
+        $fetch(`${config.public.apiBase || '/api'}/peliculas/${route.params.id}`)
             .then(res => {
                 const movie = res.data || res
                 bookingStore.setMovie(movie)

@@ -93,13 +93,19 @@ const props = defineProps({
 const emit = defineEmits(['toggle-seat', 'mouse-move'])
 
 const handleMouseMove = (e) => {
+  try {
     const target = e.currentTarget || e.target
-    if (!target) return
+    if (!target || typeof target.getBoundingClientRect !== 'function') return
     const rect = target.getBoundingClientRect()
-    if (!rect) return
+    if (!rect || rect.left === undefined || rect.top === undefined) return
+    if (e.clientX === undefined || e.clientY === undefined) return
+
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     emit('mouse-move', { x, y })
+  } catch (err) {
+    // Ignore synthetic Cypress event payload errors 
+  }
 }
 
 const isLockedByOther = (seat) => {

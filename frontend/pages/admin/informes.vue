@@ -25,38 +25,39 @@
         <p class="text-sm uppercase tracking-widest">Failed to load reports data.</p>
       </div>
 
-      <div v-else class="space-y-8">
-        <!-- Top Stats Row -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="glass p-8 rounded-3xl relative overflow-hidden group">
-            <div class="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
-              <span class="material-symbols-outlined text-[150px] text-success">payments</span>
+      <ClientOnly>
+        <div v-if="reportsData" class="space-y-8">
+          <!-- Top Stats Row -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass p-8 rounded-3xl relative overflow-hidden group">
+              <div class="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
+                <span class="material-symbols-outlined text-[150px] text-success">payments</span>
+              </div>
+              <p class="text-secondary text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                <span class="material-symbols-outlined text-success">account_balance_wallet</span>
+                Total Revenue
+              </p>
+              <h3 class="text-5xl font-black text-white font-display">{{ formatCurrency(reportsData.total_revenue) }}</h3>
             </div>
-            <p class="text-secondary text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
-              <span class="material-symbols-outlined text-success">account_balance_wallet</span>
-              Total Revenue
-            </p>
-            <h3 class="text-5xl font-black text-white font-display">{{ formatCurrency(reportsData.total_revenue) }}</h3>
-          </div>
 
-          <div class="glass p-8 rounded-3xl relative overflow-hidden group">
-            <div class="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
-              <span class="material-symbols-outlined text-[150px] text-primary">event_seat</span>
-            </div>
-            <p class="text-secondary text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
-              <span class="material-symbols-outlined text-primary">pie_chart</span>
-              Global Occupancy Rate
-            </p>
-            <div class="flex items-end gap-4 mt-2">
-              <h3 class="text-5xl font-black text-white font-display">{{ reportsData.occupancy_rate }}%</h3>
-              <p class="text-secondary pb-1">{{ reportsData.total_seats_sold }} / {{ reportsData.total_capacity }} seats</p>
-            </div>
-            <!-- Occupancy Bar -->
-            <div class="h-3 w-full bg-surface-300 rounded-full overflow-hidden mt-6">
-              <div class="h-full bg-primary transition-all duration-1000 shadow-[0_0_10px_rgba(242,13,51,0.5)]" :style="{ width: `${reportsData.occupancy_rate}%` }"></div>
+            <div class="glass p-8 rounded-3xl relative overflow-hidden group">
+              <div class="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity">
+                <span class="material-symbols-outlined text-[150px] text-primary">event_seat</span>
+              </div>
+              <p class="text-secondary text-sm font-bold uppercase tracking-wider mb-2 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">pie_chart</span>
+                Global Occupancy Rate
+              </p>
+              <div class="flex items-end gap-4 mt-2">
+                <h3 class="text-5xl font-black text-white font-display">{{ reportsData.occupancy_rate || 0 }}%</h3>
+                <p class="text-secondary pb-1">{{ reportsData.total_seats_sold || 0 }} / {{ reportsData.total_capacity || 0 }} seats</p>
+              </div>
+              <!-- Occupancy Bar -->
+              <div class="h-3 w-full bg-surface-300 rounded-full overflow-hidden mt-6">
+                <div class="h-full bg-primary transition-all duration-1000 shadow-[0_0_10px_rgba(242,13,51,0.5)]" :style="{ width: (reportsData.occupancy_rate || 0) + '%' }"></div>
+              </div>
             </div>
           </div>
-        </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <!-- Revenue by Ticket Type -->
@@ -75,8 +76,8 @@
                 </div>
                 <!-- Calculate width relative to total revenue. Prevent div by zero -->
                 <div class="h-12 w-full bg-surface-300 rounded-xl overflow-hidden relative">
-                   <div class="absolute inset-y-0 left-0 bg-accent/80 transition-all duration-1000 flex items-center px-4" 
-                        :style="{ width: `${reportsData.total_revenue > 0 ? (type.revenue / reportsData.total_revenue) * 100 : 0}%` }">
+                   <div class="absolute inset-y-0 left-0 bg-primary/80 transition-all duration-1000 flex items-center px-4" 
+                        :style="{ width: (reportsData.total_revenue > 0 ? (type.revenue / reportsData.total_revenue) * 100 : 0) + '%' }">
                    </div>
                 </div>
               </div>
@@ -109,8 +110,9 @@
             </div>
           </div>
         </div>
+        </div>
+      </ClientOnly>
 
-      </div>
     </div>
   </div>
 </template>
@@ -128,8 +130,10 @@ if (!isAdmin.value) {
   router.push('/')
 }
 
-const { data: reportsAPI, pending } = await useFetch(`${config.public.apiBase}/admin/reports`)
-const reportsData = computed(() => reportsAPI.value || null)
+const { data: reportsAPI, pending } = useLazyFetch(`${config.public.apiBase}/admin/reports`)
+const reportsData = computed(() => {
+    return reportsAPI.value || null;
+})
 
 const formatCurrency = (amount) => {
   if (!amount) return '0.00 €'

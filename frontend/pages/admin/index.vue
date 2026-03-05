@@ -87,7 +87,7 @@
                 </div>
                 <!-- Progress bar for sales -->
                 <div class="h-2 w-full bg-surface-300 rounded-full overflow-hidden">
-                  <div class="h-full bg-success transition-all duration-1000" :style="{ width: `${((movie.sold_seats || 0) / 40) * 100}%` }"></div>
+                  <div class="h-full bg-primary transition-all duration-1000 shadow-[0_0_10px_rgba(242,13,51,0.5)]" :style="{ width: ((movie.sold_seats || 0) / 40 * 100) + '%' }"></div>
                 </div>
                 
                 <div class="flex justify-between items-center text-sm pt-2 border-t border-white/5">
@@ -126,7 +126,7 @@ if (!isAdmin.value) {
 const realtimeState = ref(null)
 let pollInterval = null
 
-const { data: dashboardData, pending } = await useFetch(`${config.public.apiBase}/admin/dashboard`)
+const { data: dashboardData, pending } = useLazyFetch(`${config.public.apiBase}/admin/dashboard`)
 
 const fetchRealtimeState = async () => {
   try {

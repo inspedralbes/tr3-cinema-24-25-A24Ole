@@ -44,13 +44,13 @@
         <NuxtLink
           :to="`/sesion/${movie.id}/asientos`"
           @click="emit('book', movie)"
-          class="px-8 py-4 bg-primary text-white font-bold uppercase text-sm tracking-widest rounded-lg shadow-[0_0_20px_rgba(242,13,51,0.5)] hover:bg-red-600 hover:scale-105 transition-all flex items-center gap-3"
+          class="btn-primary"
         >
           <span>Book Tickets</span>
           <span class="material-symbols-outlined">confirmation_number</span>
         </NuxtLink>
         <button
-          class="px-8 py-4 bg-surface-200/50 backdrop-blur text-white font-bold uppercase text-sm tracking-widest rounded-lg border border-white/10 hover:bg-white/10 hover:border-white/30 transition-all flex items-center gap-3"
+          class="btn-secondary"
         >
           <span>Watch Trailer</span>
           <span class="material-symbols-outlined">play_circle</span>

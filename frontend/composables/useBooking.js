@@ -13,7 +13,8 @@ export const useBooking = () => {
     }
 
     const nextStep = (currentStep) => {
-        const sessionId = store.currentMovie?.id_pelicula_api || store.currentMovie?.id || 1
+        const currentRouteParams = router.currentRoute.value.params;
+        const sessionId = currentRouteParams.id || store.currentMovie?.id_pelicula_api || store.currentMovie?.id || 1
         
         switch (currentStep) {
             case 'seats':
