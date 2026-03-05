@@ -54,26 +54,33 @@ echo -e "${GREEN}✓ System updated${NC}"
 echo ""
 
 # ============================================================================
-# 2. INSTALL DOCKER
+# 2. VERIFY DOCKER & DOCKER COMPOSE
 # ============================================================================
-echo -e "${YELLOW}[2/7] Installing Docker and Docker Compose...${NC}"
+echo -e "${YELLOW}[2/7] Checking Docker installation...${NC}"
 
-# Install Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-bash get-docker.sh
-rm get-docker.sh
+# Check if Docker is already installed
+if command -v docker &> /dev/null; then
+    echo -e "${GREEN}✓ Docker already installed${NC}"
+    docker --version
+else
+    echo -e "${YELLOW}Docker not found, installing...${NC}"
+    curl -fsSL https://get.docker.com -o get-docker.sh
+    bash get-docker.sh
+    rm get-docker.sh
+    usermod -aG docker $SUDO_USER || true
+    echo -e "${GREEN}✓ Docker installed${NC}"
+fi
 
-# Install Docker Compose v2
-apt-get install -y docker-compose-plugin
+# Check if Docker Compose v2 is installed
+if docker compose version &> /dev/null; then
+    echo -e "${GREEN}✓ Docker Compose v2 already installed${NC}"
+    docker compose version
+else
+    echo -e "${YELLOW}Docker Compose v2 not found, installing...${NC}"
+    apt-get install -y docker-compose-plugin
+    echo -e "${GREEN}✓ Docker Compose installed${NC}"
+fi
 
-# Add current user to docker group (so you can use docker without sudo)
-usermod -aG docker $SUDO_USER || true
-
-# Verify installation
-docker --version
-docker compose version
-
-echo -e "${GREEN}✓ Docker installed${NC}"
 echo ""
 
 # ============================================================================
