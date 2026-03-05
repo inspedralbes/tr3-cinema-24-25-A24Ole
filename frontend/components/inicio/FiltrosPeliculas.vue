@@ -19,5 +19,5 @@ defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const filters = ['All', 'Sci-Fi', 'Action', 'Thriller', 'Mystery', 'Drama']
+const filters = ['All', 'Adventure', 'Crime', 'Drama', 'Comedy', 'Fantasy']
 </script>
