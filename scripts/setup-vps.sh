@@ -59,26 +59,47 @@ echo ""
 echo -e "${YELLOW}[2/7] Checking Docker installation...${NC}"
 
 # Check if Docker is already installed
-if command -v docker &> /dev/null; then
+if command -v docker &> /dev/null && docker --version &> /dev/null; then
     echo -e "${GREEN}✓ Docker already installed${NC}"
     docker --version
+    
+    # Check if Docker Compose v2 is installed
+    if docker compose version &> /dev/null; then
+        echo -e "${GREEN}✓ Docker Compose v2 already installed${NC}"
+        docker compose version
+    else
+        echo -e "${YELLOW}Installing Docker Compose v2...${NC}"
+        apt-get install -y docker-compose-plugin 2>/dev/null || true
+        if docker compose version &> /dev/null; then
+            echo -e "${GREEN}✓ Docker Compose v2 installed${NC}"
+        fi
+    fi
 else
-    echo -e "${YELLOW}Docker not found, installing...${NC}"
-    curl -fsSL https://get.docker.com -o get-docker.sh
-    bash get-docker.sh
-    rm get-docker.sh
-    usermod -aG docker $SUDO_USER || true
-    echo -e "${GREEN}✓ Docker installed${NC}"
-fi
-
-# Check if Docker Compose v2 is installed
-if docker compose version &> /dev/null; then
-    echo -e "${GREEN}✓ Docker Compose v2 already installed${NC}"
-    docker compose version
-else
-    echo -e "${YELLOW}Docker Compose v2 not found, installing...${NC}"
-    apt-get install -y docker-compose-plugin
-    echo -e "${GREEN}✓ Docker Compose installed${NC}"
+    echo -e "${YELLOW}Docker not found or not working. Installing...${NC}"
+    
+    # Fix any broken packages first
+    echo -e "${YELLOW}Fixing broken packages...${NC}"
+    apt-get --fix-broken install -y 2>/dev/null || true
+    apt-get autoremove -y 2>/dev/null || true
+    apt-get clean 2>/dev/null || true
+    
+    # Install Docker
+    curl -fsSL https://get.docker.com -o get-docker.sh 2>/dev/null
+    if [ -f get-docker.sh ]; then
+        bash get-docker.sh
+        rm get-docker.sh
+        
+        # Add user to docker group if running as non-root
+        if [ ! -z "$SUDO_USER" ]; then
+            usermod -aG docker $SUDO_USER || true
+        fi
+        
+        echo -e "${GREEN}✓ Docker installed${NC}"
+        docker --version
+    else
+        echo -e "${RED}✗ Failed to download Docker installation script${NC}"
+        exit 1
+    fi
 fi
 
 echo ""
