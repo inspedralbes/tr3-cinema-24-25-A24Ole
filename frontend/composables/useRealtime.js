@@ -15,7 +15,7 @@ const currentRoomId = ref(null)
 export const useRealtime = () => {
   const config = useRuntimeConfig()
   // Ensure we use the correct URL. In dev it might be localhost:3002
-  const SOCKET_URL = 'http://localhost:3002' 
+  const SOCKET_URL = config.public.socketUrl || 'http://localhost:3002' 
   const router = useRouter()
 
   const connect = async (roomId) => {
