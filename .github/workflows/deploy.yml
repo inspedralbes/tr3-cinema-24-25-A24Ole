@@ -1,0 +1,41 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Server via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/cinema || mkdir -p /var/www/cinema && cd /var/www/cinema
+
+            # Clonar o actualizar repo
+            if [ ! -d ".git" ]; then
+              git clone https://github.com/${{ github.repository }}.git .
+            else
+              git pull origin main
+            fi
+
+            # Crear archivos .env desde secrets
+            echo "${{ secrets.PROD_ENV_BACKEND }}" > backend/.env
+            echo "${{ secrets.PROD_ENV_FRONTEND }}" > frontend/.env
+
+            # Levantar Docker
+            docker compose -f docker-compose.prod.yml up -d --build
+
+            # Ejecutar tareas post-despliegue
+            docker exec cinema_backend php artisan migrate --force
+            docker exec cinema_backend php artisan config:cache
+            docker exec cinema_backend php artisan route:cache
+            docker exec cinema_backend php artisan view:cache

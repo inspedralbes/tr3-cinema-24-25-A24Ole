@@ -1,0 +1,79 @@
+version: "3.8"
+
+services: 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cinema_backend
+    restart: always
+    ports:
+      - "8008:8000"
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+    volumes:
+      - backend_data:/var/www/html
+    networks:
+      - cinema_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cinema_frontend
+    restart: always
+    ports:
+      - "5008:3000"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - cinema_network
+
+  realtime:
+    build:
+      context: ./realtime
+      dockerfile: Dockerfile
+    container_name: cinema_realtime
+    restart: always
+    ports:
+      - "3008:3002"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - cinema_network
+
+  db:
+    image: mysql:8.0
+    container_name: cinema_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: cinema
+      MYSQL_ROOT_PASSWORD: root # Debería ser sobreescrito por el .env generado
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - cinema_network
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: cinema_mailpit
+    restart: always
+    ports:
+      - "3009:8025" # Dashboard de Mailpit en el puerto 3009 (pedido por el usuario)
+      - "1025:1025"
+    networks:
+      - cinema_network
+
+networks:
+  cinema_network:
+    driver: bridge
+
+volumes:
+  db_data:
+  backend_data:
