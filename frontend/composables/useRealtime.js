@@ -58,7 +58,7 @@ export const useRealtime = () => {
     }
 
     socket.value = io(SOCKET_URL, {
-        transports: ['websocket'],
+        // Remove forced websocket to allow polling fallback for better connectivity
         query: { roomId },
         autoConnect: true
     })
