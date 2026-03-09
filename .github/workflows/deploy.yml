@@ -39,7 +39,9 @@ jobs:
             sleep 15
 
             # Ejecutar tareas post-despliegue
+            docker exec cinema_backend chmod -R 775 storage bootstrap/cache
             docker exec cinema_backend php artisan migrate --force
+            docker exec cinema_backend php artisan app:sincronizar-peliculas
             docker exec cinema_backend php artisan config:cache
             docker exec cinema_backend php artisan route:cache
             docker exec cinema_backend php artisan view:cache
