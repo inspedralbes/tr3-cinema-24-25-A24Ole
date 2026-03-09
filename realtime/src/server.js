@@ -16,7 +16,7 @@ app.use('/admin', adminRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*", // Allow all for dev
+        origin: ["http://cinema.daw.inspedralbes.cat", "http://localhost:3000"],
         methods: ["GET", "POST"]
     }
 });

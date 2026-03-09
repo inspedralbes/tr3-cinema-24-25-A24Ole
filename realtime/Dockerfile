@@ -18,5 +18,5 @@ ENV NODE_ENV=production
 # Expose port
 EXPOSE 3002
 
-# Run dev server
-CMD ["npm", "run", "dev"]
+# Run server
+CMD ["npm", "start"]
