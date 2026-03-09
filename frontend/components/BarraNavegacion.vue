@@ -18,7 +18,13 @@
     </nav>
 
     <div class="flex items-center gap-4">
-      <button @click="handleAdminToggle" :class="['admin-toggle-btn group', isAdmin ? 'active' : '']" title="Toggle Admin Mode">
+      <button 
+        @click="handleAdminToggle" 
+        :class="['admin-toggle-btn group', isAdmin ? 'active' : '']" 
+        title="Toggle Admin Mode"
+        data-testid="admin-toggle"
+        :data-hydrated="isHydrated"
+      >
         <span class="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">
           {{ isAdmin ? 'admin_panel_settings' : 'person' }}
         </span>
@@ -28,17 +34,24 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 import { useAdmin } from '@/composables/useAdmin'
 import { useRouter } from 'vue-router'
 
 const { isAdmin, toggleAdmin } = useAdmin()
 const router = useRouter()
+const isHydrated = ref(false)
+
+onMounted(() => {
+  isHydrated.value = true
+})
 
 const handleAdminToggle = () => {
   toggleAdmin()
+  // Use nextTick or immediate state check to ensure navigation matches the new state
   if (isAdmin.value) {
     router.push('/admin')
-  } else {
+  } else if (router.currentRoute.value.path.startsWith('/admin')) {
     router.push('/')
   }
 }

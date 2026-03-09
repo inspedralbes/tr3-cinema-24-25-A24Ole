@@ -48,9 +48,17 @@ describe('Admin Panel Flow', () => {
     // ─────────────────────────────────────────────────────
     cy.visit('/')
 
+    // Wait for movies to load as a sign of hydration
+    cy.contains('h3', 'The Lord of the Rings', { timeout: 10000 }).should('be.visible')
+
     // The navbar has an .admin-toggle-btn button that toggles isAdmin state
-    // and auto-navigates to /admin once activated
-    cy.get('.admin-toggle-btn').click()
+    // and auto-navigates to /admin once activated. 
+    // We wait for the data-hydrated="true" attribute which we added to BarraNavegacion.vue
+    // to ensure Vue has finished hydration and event listeners are attached.
+    cy.get('[data-testid="admin-toggle"]')
+      .should('have.attr', 'data-hydrated', 'true')
+      .click()
+      .should('have.class', 'active')
 
     // Should now be on /admin and the dashboard API should fire
     cy.url({ timeout: 10000 }).should('include', '/admin')
@@ -87,7 +95,7 @@ describe('Admin Panel Flow', () => {
     // Then click on "The Lord of the Rings" movie
     // ─────────────────────────────────────────────────────
     // Click the toggle again to exit admin mode (it navigates to /)
-    cy.get('.admin-toggle-btn').click()
+    cy.get('[data-testid="admin-toggle"]').click().should('not.have.class', 'active')
     cy.url({ timeout: 10000 }).should('eq', 'http://localhost:3000/')
 
     // Wait for movies to load on homepage
@@ -100,10 +108,8 @@ describe('Admin Panel Flow', () => {
     // Verify the seat selection map renders
     cy.get('.screen-curve', { timeout: 10000 }).should('be.visible')
 
-    // ─────────────────────────────────────────────────────
-    // STEP 5: Enable admin mode again and go back to Detailed Reports
-    // ─────────────────────────────────────────────────────
-    cy.get('.admin-toggle-btn').click()
+    // Enable admin mode again and go back to Detailed Reports
+    cy.get('[data-testid="admin-toggle"]').click().should('have.class', 'active')
     cy.url({ timeout: 10000 }).should('include', '/admin')
     cy.wait('@getDashboard', { timeout: 10000 })
 

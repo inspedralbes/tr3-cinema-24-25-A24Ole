@@ -57,6 +57,6 @@ describe('Booking Flow - The Lord of the Rings', () => {
     cy.url({ timeout: 15000 }).should('include', '-confirmacion')
     
     // Ensure that it reached confirmation correctly
-    cy.contains(/Booking Confirmed|Payment Successful/i).should('exist')
+    cy.contains(/Booking Confirmed|Payment Successful/i, { timeout: 10000 }).should('exist')
   })
 })

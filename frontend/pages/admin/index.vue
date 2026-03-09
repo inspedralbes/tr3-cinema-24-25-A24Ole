@@ -126,11 +126,6 @@ const config = useRuntimeConfig()
 const router = useRouter()
 const { isAdmin } = useAdmin()
 
-// Protection if navigated directly
-if (!isAdmin.value) {
-  router.push('/')
-}
-
 const realtimeState = ref(null)
 let pollInterval = null
 
@@ -165,6 +160,12 @@ const resetPelicula = async (movieId) => {
 }
 
 onMounted(() => {
+    // Protection if navigated directly
+    if (!isAdmin.value) {
+      router.push('/')
+      return
+    }
+
     // Initial fetch
     fetchRealtimeState()
     

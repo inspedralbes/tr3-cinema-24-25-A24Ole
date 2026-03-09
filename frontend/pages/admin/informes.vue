@@ -121,14 +121,18 @@
 import { useAdmin } from '@/composables/useAdmin'
 import { useRouter, useRuntimeConfig } from '#imports'
 
+import { onMounted } from 'vue'
+
 const router = useRouter()
 const { isAdmin } = useAdmin()
 const config = useRuntimeConfig()
 
-// Protection if navigated directly
-if (!isAdmin.value) {
-  router.push('/')
-}
+onMounted(() => {
+  // Protection if navigated directly
+  if (!isAdmin.value) {
+    router.push('/')
+  }
+})
 
 const { data: reportsAPI, pending } = useLazyFetch(`${config.public.apiBase}/admin/reports`)
 const reportsData = computed(() => {
