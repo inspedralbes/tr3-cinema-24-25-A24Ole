@@ -12,12 +12,16 @@ RUN npm install
 # Copy application files
 COPY . .
 
+# Build for production
+RUN npm run build
+
 # Expose port
 EXPOSE 3000
 
 # Set environment variable for host
 ENV HOST=0.0.0.0
 ENV PORT=3000
+ENV NODE_ENV=production
 
-# Run dev server
-CMD ["npm", "run", "dev", "--", "-o"]
+# Run production server
+CMD ["node", ".output/server/index.mjs"]
