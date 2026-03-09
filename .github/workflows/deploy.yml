@@ -34,6 +34,10 @@ jobs:
             # Levantar Docker
             docker compose -f docker-compose.prod.yml up -d --build
 
+            # Esperar a que el backend esté listo
+            echo "Waiting for backend to stabilize..."
+            sleep 15
+
             # Ejecutar tareas post-despliegue
             docker exec cinema_backend php artisan migrate --force
             docker exec cinema_backend php artisan config:cache
