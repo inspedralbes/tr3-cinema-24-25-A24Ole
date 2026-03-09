@@ -28,6 +28,7 @@ jobs:
             fi
 
             # Crear archivos .env desde secrets
+            echo "${{ secrets.PROD_ENV_BACKEND }}" > .env
             echo "${{ secrets.PROD_ENV_BACKEND }}" > backend/.env
             echo "${{ secrets.PROD_ENV_FRONTEND }}" > frontend/.env
 

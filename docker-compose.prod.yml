@@ -52,7 +52,7 @@ services:
     restart: always
     environment:
       MYSQL_DATABASE: cinema
-      MYSQL_ROOT_PASSWORD: root # Debería ser sobreescrito por el .env generado
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
     networks:
