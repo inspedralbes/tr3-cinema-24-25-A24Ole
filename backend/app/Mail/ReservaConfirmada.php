@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Reserva;
 
-class ReservaConfirmada extends Mailable
+class ReservaConfirmada extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

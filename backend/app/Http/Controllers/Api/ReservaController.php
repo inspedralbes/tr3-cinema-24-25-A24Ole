@@ -63,7 +63,7 @@ class ReservaController extends Controller
         $user = $request->user('sanctum');
         $userId = $user ? $user->id_usuario : null;
 
-        return DB::transaction(function () use ($request, $peliculaId, $totalPrecio, $userId, $peliculaModel) {
+        $reserva = DB::transaction(function () use ($request, $peliculaId, $totalPrecio, $userId, $peliculaModel) {
             $reserva = Reserva::create([
                 'pelicula_id' => $peliculaId,
                 'user_id' => $userId,
@@ -89,23 +89,24 @@ class ReservaController extends Controller
                 ]);
             }
 
-            Log::info('Reserva exitosa', ['reserva_id' => $reserva->id]);
-            
-            try {
-                 Mail::to($reserva->email)->queue(new ReservaConfirmada($reserva));
-                 Log::info('Correo de confirmación en cola', ['email' => $reserva->email]);
-            } catch (\Exception $e) {
-                 Log::error('Fallo al encolar correo de confirmación', ['error' => $e->getMessage()]);
-            }
+            return $reserva;
+        }); // Fin de la transacción
 
-            return response()->json([
-                'id' => $reserva->id,
-                'nombre' => $reserva->nombre,
-                'email' => $reserva->email,
-                'total_pagado' => $reserva->total_pagado,
-                'pelicula' => $peliculaModel
-            ], 201);
-        });
+        // Enviar correo fuera de la transacción para evitar bloqueos y timeouts
+        try {
+            Mail::to($reserva->email)->queue(new ReservaConfirmada($reserva));
+            Log::info('Correo de confirmación en cola (fuera de transacción)', ['email' => $reserva->email]);
+        } catch (\Exception $e) {
+            Log::error('Fallo al encolar correo de confirmación', ['error' => $e->getMessage()]);
+        }
+
+        return response()->json([
+            'id' => $reserva->id,
+            'nombre' => $reserva->nombre,
+            'email' => $reserva->email,
+            'total_pagado' => $reserva->total_pagado,
+            'pelicula' => $peliculaModel
+        ], 201);
     }
 
     public function show($id)
