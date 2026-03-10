@@ -44,7 +44,17 @@ export const translations = {
       today: 'Today',
       fees: 'Booking Fees',
       total: 'Total',
-      proceedPayment: 'Proceed to Payment'
+      proceedPayment: 'Proceed to Payment',
+      noSeatsSelected: 'No seats selected',
+      screen: 'Screen',
+      legend: {
+        available: 'Available',
+        selected: 'Selected',
+        occupied: 'Occupied',
+        blocked: 'Blocked',
+        vip: 'VIP',
+        accessible: 'Accessible'
+      }
     },
     checkout: {
       title: 'Checkout',
@@ -124,7 +134,17 @@ export const translations = {
       today: 'Hoy',
       fees: 'Gastos de Gestión',
       total: 'Total',
-      proceedPayment: 'Continuar al Pago'
+      proceedPayment: 'Continuar al Pago',
+      noSeatsSelected: 'No se han seleccionado butacas',
+      screen: 'Pantalla',
+      legend: {
+        available: 'Disponible',
+        selected: 'Seleccionado',
+        occupied: 'Ocupado',
+        blocked: 'Bloqueado',
+        vip: 'VIP',
+        accessible: 'Accesible'
+      }
     },
     checkout: {
       title: 'Finalizar Compra',
@@ -204,7 +224,17 @@ export const translations = {
       today: 'Avui',
       fees: 'Despeses de Gestió',
       total: 'Total',
-      proceedPayment: 'Continuar al Pagament'
+      proceedPayment: 'Continuar al Pagament',
+      noSeatsSelected: 'No s\'han seleccionat seients',
+      screen: 'Pantalla',
+      legend: {
+        available: 'Disponible',
+        selected: 'Seleccionat',
+        occupied: 'Ocupat',
+        blocked: 'Bloquejat',
+        vip: 'VIP',
+        accessible: 'Accessible'
+      }
     },
     checkout: {
       title: 'Finalitzar Compra',

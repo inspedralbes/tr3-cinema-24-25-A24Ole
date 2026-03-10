@@ -49,7 +49,7 @@
               </div>
               <div v-else class="py-12 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-2xl text-white/20">
                   <span class="material-symbols-outlined text-4xl mb-2">event_seat</span>
-                  <p class="text-[10px] font-bold uppercase tracking-widest">No seats selected</p>
+                  <p class="text-[10px] font-bold uppercase tracking-widest">{{ $t('booking.noSeatsSelected') }}</p>
               </div>
           </div>
       </div>
@@ -87,14 +87,21 @@
 
 <script setup>
 import { watch, onMounted } from 'vue'
+import { useBookingStore } from '@/stores/booking'
 import { useBookingTimer } from '@/composables/useBookingTimer'
+import { useI18n } from '@/composables/useI18n'
 
 const props = defineProps({
-  selectedSeats: Array
+  selectedSeats: {
+    type: Array,
+    default: () => []
+  }
 })
 
 const emit = defineEmits(['remove', 'next'])
 
+const { $t } = useI18n()
+const bookingStore = useBookingStore()
 const { startTimer, clearTimer, formattedTime, isActive } = useBookingTimer()
 
 watch(() => props.selectedSeats.length, (newLength) => {
@@ -105,18 +112,9 @@ watch(() => props.selectedSeats.length, (newLength) => {
     }
 })
 
-// Just in case it mounts and we already have seats in store
 onMounted(() => {
     if (props.selectedSeats.length > 0 && !isActive.value) {
         startTimer()
     }
 })
-
-const getSeatTypeLabel = (type) => {
-  switch(type) {
-    case 'vip': return 'VIP Seat'
-    case 'disabled': return 'Accessible Seat'
-    default: return 'Standard Seat'
-  }
-}
 </script>

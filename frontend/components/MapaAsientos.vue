@@ -3,7 +3,7 @@
     <!-- Screen Representation -->
     <div class="w-full max-w-2xl mb-14 relative">
       <div class="screen-curve h-12 w-full flex items-end justify-center">
-        <span class="text-[10px] text-white/30 uppercase tracking-[0.4em] mb-2">Screen</span>
+        <span class="text-[10px] text-white/30 uppercase tracking-[0.4em] mb-2">{{ $t('booking.screen') }}</span>
       </div>
     </div>
 
@@ -11,30 +11,30 @@
     <div class="flex flex-wrap justify-center gap-8 mb-12">
       <div class="flex items-center gap-2">
         <div class="w-5 h-5 rounded border border-white/40"></div>
-        <span class="text-[10px] uppercase text-white/60 font-bold">Available</span>
+        <span class="text-[10px] uppercase text-white/60 font-bold">{{ $t('booking.legend.available') }}</span>
       </div>
       <div class="flex items-center gap-2">
         <div class="w-5 h-5 rounded bg-primary seat-selected"></div>
-        <span class="text-[10px] uppercase text-white/60 font-bold">Selected</span>
+        <span class="text-[10px] uppercase text-white/60 font-bold">{{ $t('booking.legend.selected') }}</span>
       </div>
       <div class="flex items-center gap-2">
         <div class="w-5 h-5 rounded bg-white/20"></div>
-        <span class="text-[10px] uppercase text-white/60 font-bold">Occupied</span>
+        <span class="text-[10px] uppercase text-white/60 font-bold">{{ $t('booking.legend.occupied') }}</span>
       </div>
       <div class="flex items-center gap-2">
         <div class="w-5 h-5 rounded bg-white/10 flex items-center justify-center">
           <span class="material-symbols-outlined text-[14px] text-white/40">lock</span>
         </div>
-        <span class="text-[10px] uppercase text-white/60 font-bold">Blocked</span>
+        <span class="text-[10px] uppercase text-white/60 font-bold">{{ $t('booking.legend.blocked') }}</span>
       </div>
       <!-- Types Legend -->
       <div class="flex items-center gap-2">
         <div class="w-5 h-5 rounded border border-yellow-500/50"></div>
-        <span class="text-[10px] uppercase text-white/60 font-bold">VIP</span>
+        <span class="text-[10px] uppercase text-white/60 font-bold">{{ $t('booking.legend.vip') }}</span>
       </div>
        <div class="flex items-center gap-2">
         <div class="w-5 h-5 rounded border border-blue-500/50"></div>
-        <span class="text-[10px] uppercase text-white/60 font-bold">Accessible</span>
+        <span class="text-[10px] uppercase text-white/60 font-bold">{{ $t('booking.legend.accessible') }}</span>
       </div>
     </div>
 
@@ -71,6 +71,10 @@
 </template>
 
 <script setup>
+import { useI18n } from '@/composables/useI18n'
+
+const { $t } = useI18n()
+
 const props = defineProps({
   rows: {
     type: Array,
