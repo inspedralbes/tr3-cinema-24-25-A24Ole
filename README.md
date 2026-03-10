@@ -18,17 +18,6 @@ Plataforma de venta de entradas con experiencia de usuario premium, gestión rob
 | **Infraestructura** | Docker (6 contenedores) + GitHub Actions      |
 | **Testing**         | Cypress (E2E)                                 |
 
-## Arquitectura de Servicios (Docker)
-
-```
-cinema_frontend   → http://localhost:3000
-cinema_backend    → http://localhost:8000
-cinema_realtime   → http://localhost:3002
-cinema_db         → MySQL 8.0 (puerto 3306)
-cinema_adminer    → http://localhost:8080
-cinema_mailpit    → http://localhost:8025
-```
-
 ## Funcionalidades Implementadas
 
 ### Frontend (Nuxt 3)
@@ -69,7 +58,7 @@ Esto levanta todos los servicios automáticamente. El backend ejecuta las migrac
 ## Gestor de Tareas
 
 - [Taiga — TR3 Cinema Oleksiy](https://tree.taiga.io/project/lexk0-tr3-cinema-oleksiy/timeline)
-
+- [Url Prod](https://cinema.daw.inspedralbes.cat/)
 ## Estado del Proyecto
 
 ✅ **Proyecto Finalizado — Versión 1.0**
