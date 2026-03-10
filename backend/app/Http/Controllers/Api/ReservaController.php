@@ -92,10 +92,10 @@ class ReservaController extends Controller
             Log::info('Reserva exitosa', ['reserva_id' => $reserva->id]);
             
             try {
-                 Mail::to($reserva->email)->send(new ReservaConfirmada($reserva));
-                 Log::info('Correo de confirmación enviado', ['email' => $reserva->email]);
+                 Mail::to($reserva->email)->queue(new ReservaConfirmada($reserva));
+                 Log::info('Correo de confirmación en cola', ['email' => $reserva->email]);
             } catch (\Exception $e) {
-                 Log::error('Fallo al enviar correo de confirmación', ['error' => $e->getMessage()]);
+                 Log::error('Fallo al encolar correo de confirmación', ['error' => $e->getMessage()]);
             }
 
             return response()->json([
