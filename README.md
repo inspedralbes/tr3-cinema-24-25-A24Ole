@@ -40,6 +40,7 @@ cinema_mailpit    → http://localhost:8025
 - 🛒 **Checkout** — Carrito glassmorphic con timer de reserva
 - ✅ **Confirmación** — Ticket con código QR generado
 - 🔴 **Panel de Administración** — Dashboard con métricas e informes detallados
+- 🌍 **Multilingüe** — Soporte para múltiples idiomas (Català, Castellano, English) en toda la interfaz
 - 🧪 **Tests Cypress** — Suites E2E para navegación, reserva y panel admin
 
 ### Backend (Laravel 12)
@@ -71,8 +72,8 @@ Esto levanta todos los servicios automáticamente. El backend ejecuta las migrac
 
 ## Estado del Proyecto
 
-✅ **Sprint 3 — Fase de verificación y tests**
+✅ **Proyecto Finalizado — Versión 1.0**
 
 - [x] Sprint 1 — Arquitectura base, Docker, DB, API películas
 - [x] Sprint 2 — Mapa de asientos, realtime, flujo de compra completo, panel admin
-- [x] Sprint 3 — Refactoring modular, tests Cypress, informes admin, correcciones de lógica de reservas
+- [x] Sprint 3 — Refactoring modular, tests Cypress, informes admin, soporte multilingüe y correcciones finales

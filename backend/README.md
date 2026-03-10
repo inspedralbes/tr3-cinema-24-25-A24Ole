@@ -16,8 +16,8 @@ Módulo de persistencia, lógica de negocio y API REST del sistema de reservas d
 | `usuarios`  | Usuarios con roles (`cliente` / `admin`)               |
 | `peliculas` | Catálogo de películas sincronizadas desde API externa  |
 | `sesiones`  | Sesiones programadas (película + sala + hora + precio) |
-| `reservas`  | Cabecera de reserva (usuario / invitado, total pagado) |
-| `asientos`  | Asientos ocupados por reserva y sesión                 |
+| `reservas`  | Cabecera de reserva (usuario / invitado, total)        |
+| `asientos`  | Butacas ocupadas vinculadas a reserva y película       |
 
 ## API Endpoints
 
