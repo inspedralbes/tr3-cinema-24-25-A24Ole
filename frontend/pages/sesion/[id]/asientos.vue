@@ -9,17 +9,17 @@
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
           </span>
-          Live Session
+          {{ $t('booking.liveSession') }}
         </div>
         <div class="mt-8 text-center" v-if="bookingStore.currentMovie">
           <h1 class="text-3xl font-black uppercase tracking-tighter">{{ bookingStore.currentMovie.titulo }}</h1>
-          <p class="text-white/40 text-sm mt-1 uppercase tracking-[0.2em]">Hall 4 • Today, 8:30 PM • 4K Dolby Atmos</p>
+          <p class="text-white/40 text-sm mt-1 uppercase tracking-[0.2em]">{{ $t('booking.hall') }} 4 • {{ $t('booking.today') }}, 8:30 PM • 4K Dolby Atmos</p>
         </div>
       </div>
 
       <div v-if="isConnecting" class="w-full h-96 flex flex-col items-center justify-center gap-4 animate-pulse pt-20">
         <div class="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
-        <span class="text-xs uppercase tracking-[0.3em] font-bold text-white/50">Syncing Live Room...</span>
+        <span class="text-xs uppercase tracking-[0.3em] font-bold text-white/50">{{ $t('booking.syncing') }}</span>
       </div>
 
       <MapaAsientos 
@@ -46,6 +46,7 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useBookingStore } from '@/stores/booking'
+import { useI18n } from '@/composables/useI18n'
 import { useBooking } from '@/composables/useBooking'
 import { useRealtime } from '@/composables/useRealtime'
 import { useWebRTC } from '@/composables/useWebRTC'
@@ -53,6 +54,7 @@ import { useSeatLogic } from '@/composables/useSeatLogic'
 import BarraLateralReserva from '@/components/reserva/BarraLateralReserva.vue'
 import MapaAsientos from '@/components/MapaAsientos.vue'
 
+const { $t } = useI18n()
 const route = useRoute()
 const bookingStore = useBookingStore()
 const { nextStep } = useBooking()

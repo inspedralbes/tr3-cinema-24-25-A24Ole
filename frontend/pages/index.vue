@@ -13,7 +13,7 @@
             <span
               class="w-1.5 h-8 bg-primary rounded-full shadow-[0_0_10px_rgba(242,13,51,0.8)]"
             ></span>
-            Now Showing
+            {{ $t('home.nowShowing') }}
           </h2>
         </div>
 
@@ -29,12 +29,14 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useBookingStore } from "@/stores/booking";
+import { useI18n } from "@/composables/useI18n";
 import SeccionPrincipal from "@/components/inicio/SeccionPrincipal.vue";
 import FiltrosPeliculas from "@/components/inicio/FiltrosPeliculas.vue";
 import CuadriculaPeliculas from "@/components/inicio/CuadriculaPeliculas.vue";
 
+const { $t } = useI18n();
 const bookingStore = useBookingStore();
-const activeFilter = ref("All");
+const activeFilter = ref("all");
 
 const config = useRuntimeConfig();
 const {
@@ -51,8 +53,8 @@ const featuredMovie = computed(() => {
 });
 
 const filteredMovies = computed(() => {
-  if (activeFilter.value === "All") return movies.value;
-  return movies.value.filter((m) => m.genero.includes(activeFilter.value));
+  if (activeFilter.value === "all") return movies.value;
+  return movies.value.filter((m) => m.genero.toLowerCase().includes(activeFilter.value.toLowerCase()));
 });
 
 const handleMovieSelect = (movie) => {

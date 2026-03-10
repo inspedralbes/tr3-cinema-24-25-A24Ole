@@ -5,7 +5,7 @@
       <!-- Progress Stepper -->
       <div class="mb-10 max-w-4xl mx-auto">
         <div class="flex items-center justify-between mb-2">
-          <span class="text-sm font-bold tracking-widest uppercase text-secondary">Step 2 of 3: Ticket Selection</span>
+          <span class="text-sm font-bold tracking-widest uppercase text-secondary">Step 2 of 3: {{ $t('booking.selectType') }}</span>
           <span class="text-sm font-black text-primary">60%</span>
         </div>
         <div class="w-full bg-surface-200 h-1.5 rounded-full overflow-hidden">
@@ -15,9 +15,9 @@
 
       <div class="max-w-4xl mx-auto">
         <div class="mb-8">
-          <h2 class="text-3xl font-black mb-2 tracking-tight text-white uppercase font-display">How many tickets?</h2>
+          <h2 class="text-3xl font-black mb-2 tracking-tight text-white uppercase font-display">{{ $t('booking.howManyTickets') }}</h2>
           <p class="text-secondary text-lg">
-            You've selected <span class="text-white font-bold">{{ bookingStore.selectedSeats.length }}</span> seats: 
+            {{ $t('booking.selectedSeats', { count: bookingStore.selectedSeats.length }) }}
             <span class="text-primary font-mono bg-primary/10 border border-primary/20 px-2 py-0.5 rounded ml-1 text-sm">
               {{ bookingStore.selectedSeats.map(s => s.label).join(', ') }}
             </span>
@@ -34,8 +34,8 @@
                           {{ seat.label }}
                       </div>
                       <div>
-                          <h3 class="text-lg font-bold text-white mb-1">Seat {{ seat.label }} <span class="text-xs font-normal text-secondary uppercase tracking-wider ml-2 border border-white/10 px-2 py-0.5 rounded">{{ seat.type }}</span></h3>
-                          <p class="text-sm text-secondary font-medium">Row {{ seat.row }} • Seat {{ seat.number }}</p>
+                          <h3 class="text-lg font-bold text-white mb-1">{{ $t('booking.seat') }} {{ seat.label }} <span class="text-xs font-normal text-secondary uppercase tracking-wider ml-2 border border-white/10 px-2 py-0.5 rounded">{{ seat.type }}</span></h3>
+                          <p class="text-sm text-secondary font-medium">{{ $t('booking.row') }} {{ seat.row }} • {{ $t('booking.seat') }} {{ seat.number }}</p>
                       </div>
                   </div>
                   
@@ -47,9 +47,9 @@
                           @change="(e) => selectTicketForSeat(seat.id, e.target.value)"
                           class="w-full md:w-64 bg-surface-300/50 border border-white/10 text-white rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none appearance-none cursor-pointer hover:bg-surface-300 transition-colors"
                         >
-                            <option value="" disabled>Select Ticket Type</option>
+                            <option value="" disabled>{{ $t('booking.selectType') }}</option>
                             <option v-for="type in availableTicketTypes" :key="type.id" :value="type.id">
-                                {{ type.name }} — ${{ type.price.toFixed(2) }}
+                                {{ $t(`ticketTypes.${type.id}`) }} — ${{ type.price.toFixed(2) }}
                             </option>
                         </select>
                         <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-secondary pointer-events-none">expand_more</span>
@@ -64,8 +64,8 @@
             <span class="material-symbols-outlined">info</span>
           </div>
           <p class="text-sm text-secondary">
-            Please select a ticket type for all <strong class="text-white">{{ bookingStore.selectedSeats.length }}</strong> seats to proceed.
-            Count: <strong class="text-primary">{{ assignedCount }}/{{ bookingStore.selectedSeats.length }}</strong>
+            {{ $t('booking.infoProceed', { count: bookingStore.selectedSeats.length }) }}
+            {{ $t('booking.count') }}: <strong class="text-primary">{{ assignedCount }}/{{ bookingStore.selectedSeats.length }}</strong>
           </p>
         </div>
       </div>
@@ -75,11 +75,11 @@
     <aside class="w-full lg:w-[400px] glass border-l border-white/5 p-8 flex flex-col justify-between h-auto lg:h-[calc(100vh-80px)] backdrop-blur-xl bg-surface-100/50 sticky top-[80px]">
         <div>
              <div class="flex justify-between items-start mb-8">
-               <h3 class="text-xl font-black text-white uppercase tracking-tight">Order Summary</h3>
+               <h3 class="text-xl font-black text-white uppercase tracking-tight">{{ $t('booking.orderSummary') }}</h3>
                
                <!-- Timer Display -->
                <div v-if="isActive" class="flex flex-col items-end">
-                 <span class="text-[10px] uppercase font-bold text-white/40 tracking-widest mb-1">Seats Reserved</span>
+                 <span class="text-[10px] uppercase font-bold text-white/40 tracking-widest mb-1">{{ $t('booking.seatsReserved') }}</span>
                  <div class="bg-primary/20 border border-primary/50 text-white font-mono font-bold px-3 py-1 rounded-lg text-sm flex items-center gap-2 shadow-[0_0_10px_rgba(242,13,51,0.2)]">
                    <span class="material-symbols-outlined text-[14px] text-primary">timer</span>
                    {{ formattedTime }}
@@ -95,7 +95,7 @@
                              <span class="material-symbols-outlined text-lg">movie</span>
                           </div>
                           <div>
-                            <p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">Movie</p>
+                            <p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">{{ $t('booking.movie') }}</p>
                             <span class="text-white font-bold text-lg leading-tight block">{{ bookingStore.currentMovie?.titulo || 'Neon Demon' }}</span>
                           </div>
                       </div>
@@ -104,7 +104,7 @@
                              <span class="material-symbols-outlined text-lg">calendar_today</span>
                           </div>
                           <div>
-                            <p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">Date & Time</p>
+                            <p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">{{ $t('booking.dateTime') }}</p>
                             <span class="text-white font-medium">Friday, Oct 25 • 8:30 PM</span>
                           </div>
                       </div>
@@ -113,25 +113,25 @@
                              <span class="material-symbols-outlined text-lg">location_on</span>
                           </div>
                           <div>
-                             <p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">Theater</p>
-                             <span class="text-white font-medium">Grand Cinema, Hall 4</span>
+                             <p class="text-xs font-bold uppercase tracking-wider text-secondary mb-1">{{ $t('booking.theater') }}</p>
+                             <span class="text-white font-medium">Grand Cinema, {{ $t('booking.hall') }} 4</span>
                           </div>
                       </div>
                   </div>
 
                   <div class="pt-8 border-t border-white/10 space-y-4">
                       <div class="flex justify-between text-sm items-center" v-for="(ticket, seatId) in bookingStore.selectedTickets" :key="seatId">
-                          <span class="text-secondary font-medium">1x {{ ticket.name }} <span class="text-xs bg-white/5 px-1.5 py-0.5 rounded ml-1">{{ bookingStore.selectedSeats.find(s => s.id === seatId)?.label }}</span></span>
+                          <span class="text-secondary font-medium">1x {{ $t(`ticketTypes.${ticket.id}`) }} <span class="text-xs bg-white/5 px-1.5 py-0.5 rounded ml-1">{{ bookingStore.selectedSeats.find(s => s.id === seatId)?.label }}</span></span>
                           <span class="font-bold text-white">${{ ticket.price.toFixed(2) }}</span>
                       </div>
                       
                       <div class="flex justify-between text-sm items-center">
-                          <span class="text-secondary font-medium">Booking Fees</span>
+                          <span class="text-secondary font-medium">{{ $t('booking.fees') }}</span>
                           <span class="font-bold text-white">${{ bookingStore.totalBookingFee.toFixed(2) }}</span>
                       </div>
 
                       <div class="flex justify-between items-end pt-4 border-t border-dashed border-white/20">
-                          <span class="text-lg font-bold uppercase tracking-tight text-white">Total</span>
+                          <span class="text-lg font-bold uppercase tracking-tight text-white">{{ $t('booking.total') }}</span>
                           <span class="text-3xl font-black text-primary neon-text">${{ bookingStore.grandTotal.toFixed(2) }}</span>
                       </div>
                   </div>
@@ -143,7 +143,7 @@
           :disabled="assignedCount !== bookingStore.selectedSeats.length"
           class="w-full h-16 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black rounded-xl uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(242,13,51,0.4)] hover:shadow-[0_0_30px_rgba(242,13,51,0.6)] flex items-center justify-center gap-3 group mt-8"
         >
-            <span>Proceed to Payment</span>
+            <span>{{ $t('booking.proceedPayment') }}</span>
             <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
         </button>
     </aside>
@@ -156,7 +156,9 @@ import { useRoute } from 'vue-router'
 import { useBookingStore } from '@/stores/booking'
 import { useBooking } from '@/composables/useBooking'
 import { useBookingTimer } from '@/composables/useBookingTimer'
+import { useI18n } from '@/composables/useI18n'
 
+const { $t } = useI18n()
 const route = useRoute()
 
 const bookingStore = useBookingStore()

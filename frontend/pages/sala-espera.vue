@@ -10,16 +10,16 @@
        </div>
     </div>
     
-    <h1 class="text-5xl font-black text-white uppercase tracking-tighter mb-6 font-display">You're in line</h1>
+    <h1 class="text-5xl font-black text-white uppercase tracking-tighter mb-6 font-display">{{ $t('waitingRoom.title') }}</h1>
     <p class="text-secondary text-lg max-w-lg mb-12 leading-relaxed">
-      We are experiencing high demand. Please hold tight, you will be redirected to the booking experience shortly.
+      {{ $t('waitingRoom.subtitle') }}
     </p>
 
     <div class="bg-surface-100/80 border border-white/10 px-10 py-6 rounded-2xl backdrop-blur-md shadow-2xl relative group">
       <div class="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
       <div class="relative">
-        <p class="text-xs font-bold text-secondary uppercase tracking-widest mb-2">Your Position in Queue</p>
-        <p class="text-4xl font-black text-white neon-text">{{ queuePosition !== null ? queuePosition : 'Calculating...' }}</p>
+        <p class="text-xs font-bold text-secondary uppercase tracking-widest mb-2">{{ $t('waitingRoom.position') }}</p>
+        <p class="text-4xl font-black text-white neon-text">{{ queuePosition !== null ? queuePosition : $t('waitingRoom.calculating') }}</p>
       </div>
     </div>
   </div>
@@ -29,7 +29,9 @@
 import { useRealtime } from '@/composables/useRealtime'
 import { useRouter } from 'vue-router'
 import { watch, onMounted, onUnmounted } from 'vue'
+import { useI18n } from '@/composables/useI18n'
 
+const { $t } = useI18n()
 const router = useRouter()
 const { connect, disconnect, queuePosition, startTransition, socket } = useRealtime()
 

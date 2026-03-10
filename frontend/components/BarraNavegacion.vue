@@ -12,16 +12,35 @@
     </div>
     
     <nav class="hidden md:flex items-center gap-8">
-      <NuxtLink to="/" class="nav-link">Movies</NuxtLink>
-      <a href="#" class="nav-link">Theaters</a>
-      <a href="#" class="nav-link">Promotions</a>
+      <NuxtLink to="/" class="nav-link">{{ $t('nav.movies') }}</NuxtLink>
+      <a href="#" class="nav-link">{{ $t('nav.theaters') }}</a>
+      <a href="#" class="nav-link">{{ $t('nav.promotions') }}</a>
     </nav>
 
     <div class="flex items-center gap-4">
+      <!-- Language Switcher -->
+      <div class="relative group/lang">
+        <button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-200 border border-white/5 hover:border-primary/50 transition-all text-xs font-bold text-white uppercase tracking-widest">
+          <span class="material-symbols-outlined text-[16px] text-primary">language</span>
+          {{ locale }}
+        </button>
+        <div class="absolute right-0 top-full mt-2 w-32 bg-surface-100 border border-white/10 rounded-xl overflow-hidden opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-all duration-300 z-[60] shadow-2xl backdrop-blur-xl">
+          <button 
+            v-for="lang in ['en', 'es', 'ca']" 
+            :key="lang"
+            @click="setLocale(lang)"
+            class="w-full px-4 py-2.5 text-left text-xs font-bold uppercase tracking-widest hover:bg-primary hover:text-white transition-colors border-b border-white/5 last:border-0"
+            :class="locale === lang ? 'text-primary' : 'text-white'"
+          >
+            {{ lang === 'en' ? 'English' : lang === 'es' ? 'Español' : 'Català' }}
+          </button>
+        </div>
+      </div>
+
       <button 
         @click="handleAdminToggle" 
         :class="['admin-toggle-btn group', isAdmin ? 'active' : '']" 
-        title="Toggle Admin Mode"
+        :title="$t('nav.toggleAdmin')"
         data-testid="admin-toggle"
         :data-hydrated="isHydrated"
       >
@@ -37,8 +56,10 @@
 import { ref, onMounted } from 'vue'
 import { useAdmin } from '@/composables/useAdmin'
 import { useRouter } from 'vue-router'
+import { useI18n } from '@/composables/useI18n'
 
 const { isAdmin, toggleAdmin } = useAdmin()
+const { locale, setLocale, $t } = useI18n()
 const router = useRouter()
 const isHydrated = ref(false)
 

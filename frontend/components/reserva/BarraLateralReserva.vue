@@ -2,14 +2,11 @@
   <aside class="w-full lg:w-[400px] glass border-l border-white/5 p-8 flex flex-col justify-between h-auto lg:min-h-[calc(100vh-80px)] backdrop-blur-xl bg-surface-100/50">
     <div>
       <div class="flex justify-between items-start mb-8">
-        <h3 class="text-lg font-bold uppercase tracking-tight flex items-center gap-3">
-          <span class="w-1 h-6 bg-primary rounded-full shadow-[0_0_8px_rgba(242,13,51,0.8)]"></span>
-          Your Selection
-        </h3>
+        <h3 class="text-xl font-black text-white uppercase tracking-tight">{{ $t('booking.orderSummary') }}</h3>
         
         <!-- Timer Display -->
         <div v-if="isActive" class="flex flex-col items-end">
-          <span class="text-[10px] uppercase font-bold text-white/40 tracking-widest mb-1">Seats Reserved</span>
+          <span class="text-[10px] uppercase font-bold text-white/40 tracking-widest mb-1">{{ $t('booking.seatsReserved') }}</span>
           <div class="bg-primary/20 border border-primary/50 text-white font-mono font-bold px-3 py-1 rounded-lg text-sm flex items-center gap-2 shadow-[0_0_10px_rgba(242,13,51,0.2)]">
             <span class="material-symbols-outlined text-[14px] text-primary">timer</span>
             {{ formattedTime }}
@@ -17,57 +14,73 @@
         </div>
       </div>
       
-      <div v-if="selectedSeats.length === 0" class="flex flex-col items-center justify-center py-12 text-center border-2 border-dashed border-white/5 rounded-xl bg-white/[0.02]">
-        <span class="material-symbols-outlined text-4xl text-white/20 mb-3">event_seat</span>
-        <p class="text-white/30 text-sm font-medium">Select seats on the map<br>to proceed with booking</p>
-      </div>
-
-      <div class="space-y-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
-        <div v-for="seat in selectedSeats" :key="seat.id" 
-             class="flex items-center justify-between p-4 rounded-xl bg-surface-200/50 border border-white/5 hover:border-primary/30 transition-colors animate-fade-in group">
-          <div class="flex items-center gap-4">
-            <div class="w-12 h-12 rounded-lg bg-primary/20 border border-primary/50 text-primary flex items-center justify-center font-black text-lg shadow-[0_0_15px_rgba(242,13,51,0.2)]">
-              {{ seat.label }}
-            </div>
-            <div>
-              <p class="text-sm font-bold text-white group-hover:text-primary transition-colors">{{ getSeatTypeLabel(seat.type) }}</p>
-              <div class="flex items-center gap-2 mt-1">
-                 <p class="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white/60 uppercase font-bold tracking-wider">Row {{ seat.row }}</p>
-                 <p class="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white/60 uppercase font-bold tracking-wider">Seat {{ seat.number }}</p>
+      <!-- Selection Summary -->
+      <div class="space-y-6">
+          <!-- Movie Info -->
+          <div class="flex items-start gap-4 p-4 rounded-xl bg-surface-200/50 border border-white/5">
+              <div class="w-20 h-28 rounded-lg overflow-hidden flex-shrink-0 bg-surface-300">
+                  <img v-if="bookingStore.currentMovie?.poster_url" :src="bookingStore.currentMovie.poster_url" class="w-full h-full object-cover">
               </div>
-            </div>
+              <div>
+                  <h4 class="text-lg font-bold text-white leading-tight mb-2">{{ bookingStore.currentMovie?.titulo || 'Neon Demon' }}</h4>
+                  <div class="flex flex-col gap-1">
+                      <div class="flex items-center gap-1.5 text-[10px] text-secondary font-bold uppercase tracking-wider">
+                          <span class="material-symbols-outlined text-[14px] text-primary">calendar_today</span>
+                          Friday, Oct 25 • 8:30 PM
+                      </div>
+                      <div class="flex items-center gap-1.5 text-[10px] text-secondary font-bold uppercase tracking-wider">
+                          <span class="material-symbols-outlined text-[14px] text-primary">location_on</span>
+                          Grand Cinema, {{ $t('booking.hall') }} 4
+                      </div>
+                  </div>
+              </div>
           </div>
-          <div class="text-right">
-            <button @click="emit('remove', seat)" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-white/40 hover:text-white transition-all">
-              <span class="material-symbols-outlined text-lg">close</span>
-            </button>
+
+          <!-- Selected Seats List -->
+          <div class="space-y-3">
+              <p class="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">{{ $t('booking.selectedSeats', { count: selectedSeats.length }) }}</p>
+              <div v-if="selectedSeats.length > 0" class="flex flex-wrap gap-2">
+                  <div v-for="seat in selectedSeats" :key="seat.id" class="group relative px-3 py-1.5 rounded-lg bg-surface-300 border border-white/10 flex items-center gap-2 animate-fade-in">
+                      <span class="font-mono text-xs font-bold text-white">{{ seat.label }}</span>
+                      <button @click="emit('remove', seat)" class="text-white/30 hover:text-primary transition-colors">
+                          <span class="material-symbols-outlined text-[16px]">close</span>
+                      </button>
+                  </div>
+              </div>
+              <div v-else class="py-12 flex flex-col items-center justify-center border-2 border-dashed border-white/5 rounded-2xl text-white/20">
+                  <span class="material-symbols-outlined text-4xl mb-2">event_seat</span>
+                  <p class="text-[10px] font-bold uppercase tracking-widest">No seats selected</p>
+              </div>
           </div>
-        </div>
       </div>
     </div>
 
-    <div class="mt-8 pt-8 border-t border-white/10 space-y-6">
-      <div class="flex justify-between items-end">
-        <span class="text-xs text-white/40 uppercase tracking-widest font-bold">Total Seats</span>
-        <div class="flex items-baseline gap-1">
-           <span class="text-4xl font-black text-white tracking-tighter">{{ selectedSeats.length }}</span>
-           <span class="text-sm text-white/40 font-medium">/ 8</span>
+    <!-- Summary Footer -->
+    <div class="pt-8 border-t border-white/10 space-y-6">
+        <div class="space-y-3">
+            <div v-if="selectedSeats.length > 0" class="flex justify-between items-center text-sm">
+                <span class="text-secondary font-medium">{{ selectedSeats.length }}x Tickets</span>
+                <span class="text-white font-bold font-mono">${{ bookingStore.totalTicketPrice.toFixed(2) }}</span>
+            </div>
+            <div class="flex justify-between items-center text-sm">
+                <span class="text-secondary font-medium">{{ $t('booking.fees') }}</span>
+                <span class="text-white font-bold font-mono">${{ bookingStore.totalBookingFee.toFixed(2) }}</span>
+            </div>
+            
+            <div class="flex justify-between items-end pt-4 border-t border-dashed border-white/20">
+                <span class="text-lg font-bold uppercase tracking-tight text-white">{{ $t('booking.total') }}</span>
+                <span class="text-3xl font-black text-primary neon-text">${{ bookingStore.grandTotal.toFixed(2) }}</span>
+            </div>
         </div>
-      </div>
-      
-      <button 
-        @click="emit('next')"
-        :disabled="selectedSeats.length === 0"
-        class="group w-full h-16 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none rounded-xl flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-[0_0_20px_rgba(242,13,51,0.4)] hover:shadow-[0_0_30px_rgba(242,13,51,0.6)] text-white relative overflow-hidden"
-      >
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
-        <span class="text-sm font-black uppercase tracking-widest relative z-10">Select Tickets</span>
-        <span class="material-symbols-outlined relative z-10 group-hover:translate-x-1 transition-transform">arrow_forward</span>
-      </button>
-      
-      <p class="text-[10px] text-center text-white/30 uppercase tracking-tight">
-         By proceeding, you agree to our <a href="#" class="underline hover:text-white transition-colors">Refund Policy</a>
-      </p>
+
+        <button 
+            @click="emit('next')"
+            :disabled="selectedSeats.length === 0"
+            class="w-full h-16 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black rounded-xl uppercase tracking-widest transition-all shadow-[0_0_20px_rgba(242,13,51,0.4)] hover:shadow-[0_0_30px_rgba(242,13,51,0.6)] flex items-center justify-center gap-3 group"
+        >
+            <span>{{ $t('booking.proceedPayment') }}</span>
+            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+        </button>
     </div>
   </aside>
 </template>

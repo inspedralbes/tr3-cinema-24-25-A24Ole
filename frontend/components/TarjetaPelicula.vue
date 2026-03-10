@@ -23,7 +23,7 @@
         <!-- CTA Button (Hidden until hover/focus) -->
         <div class="movie-card-cta">
           <button class="btn-primary w-full py-3 text-xs shadow-[0_0_15px_rgba(242,13,51,0.4)] hover:shadow-[0_0_25px_rgba(242,13,51,0.6)]">
-            <span>Book Seats</span>
+            <span>{{ $t('movieCard.bookSeats') }}</span>
             <span class="material-symbols-outlined text-sm">arrow_forward</span>
           </button>
         </div>
@@ -33,6 +33,10 @@
 </template>
 
 <script setup>
+import { useI18n } from '@/composables/useI18n'
+
+const { $t } = useI18n()
+
 defineProps({
   movie: {
     type: Object,

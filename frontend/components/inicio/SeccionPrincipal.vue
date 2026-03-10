@@ -23,7 +23,7 @@
       <span
         class="inline-block px-3 py-1 mb-6 text-xs font-bold tracking-[0.2em] text-primary border border-primary/30 rounded-full uppercase bg-primary/10 backdrop-blur-md"
       >
-        Premiering Now: {{ movie.genero }}
+        {{ $t('hero.premieringNow', { genre: movie.genero }) }}
       </span>
       <h1
         class="text-5xl md:text-7xl lg:text-8xl font-black text-white uppercase tracking-tighter mb-6 leading-[0.9]"
@@ -46,13 +46,13 @@
           @click="emit('book', movie)"
           class="btn-primary"
         >
-          <span>Book Tickets</span>
+          <span>{{ $t('hero.bookTickets') }}</span>
           <span class="material-symbols-outlined">confirmation_number</span>
         </NuxtLink>
         <button
           class="btn-secondary"
         >
-          <span>Watch Trailer</span>
+          <span>{{ $t('hero.watchTrailer') }}</span>
           <span class="material-symbols-outlined">play_circle</span>
         </button>
       </div>
@@ -69,6 +69,10 @@
 </template>
 
 <script setup>
+import { useI18n } from '@/composables/useI18n'
+
+const { $t } = useI18n()
+
 const props = defineProps({
   movie: {
     type: Object,
